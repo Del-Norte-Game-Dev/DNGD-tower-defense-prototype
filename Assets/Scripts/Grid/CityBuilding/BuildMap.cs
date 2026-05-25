@@ -100,6 +100,12 @@ public class BuildMap
         return worldCorner;
     }
 
+    public Vector3 GetSnappedPlacementCorner(Vector3 worldPos, BuildingData data, BuildingData.Dir dir)
+    {
+        Vector2Int origin = ComputeOriginGridPosition(worldPos, data, dir);
+        return GetPlacementWorldCorner(dir, origin);
+    }
+
     public bool TryRemoveBuildingAtWorldPosition(Vector3 worldPos, out Transform removedBuilding)
     {
         removedBuilding = null;

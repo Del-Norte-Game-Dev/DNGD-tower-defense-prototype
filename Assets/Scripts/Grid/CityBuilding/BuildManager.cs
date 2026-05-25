@@ -134,6 +134,8 @@ public class BuildManager : GenericSingleton<BuildManager>
             InitializePreview();
         }
 
+        Vector3 snappedPos = buildMap.GetSnappedPlacementCorner(worldPos, tempBuildingData, currentDir);
+
         if (buildMap.TryGetPlacement(worldPos, tempBuildingData, currentDir, out Vector3 pfPos))
         {
             preview.transform.position = pfPos;
@@ -143,7 +145,7 @@ public class BuildManager : GenericSingleton<BuildManager>
         }
         else
         {
-            preview.transform.position = worldPos;
+            preview.transform.position = snappedPos;
             preview.transform.rotation = Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(currentDir));
             preview.SetActive(true);
             SetPreviewColor(new Color(1f, 0.25f, 0.25f, 0.5f));
