@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 public class BuildManager : GenericSingleton<BuildManager>
 {
@@ -38,12 +39,17 @@ public class BuildManager : GenericSingleton<BuildManager>
             PlaceBuilding(worldPos, tempBuildingData, currentDir);
         }
 
+        if (Input.GetMouseButtonDown(1))
+        {
+            RemoveBuilding(worldPos);
+        }
+
         if (Input.GetKeyDown(KeyCode.R))
         {
             Rotate();
         }
     }
-
+    #region preview
     private void InitializePreview()
     {
         if (tempBuildingData == null || tempBuildingData.prefab == null)
@@ -143,6 +149,7 @@ public class BuildManager : GenericSingleton<BuildManager>
             SetPreviewColor(new Color(1f, 0.25f, 0.25f, 0.5f));
         }
     }
+    #endregion
 
     public void PlaceBuilding(Vector3 worldPos, BuildingData data, BuildingData.Dir dir)
     {
@@ -151,9 +158,18 @@ public class BuildManager : GenericSingleton<BuildManager>
             return;
         }
 
-        if (buildMap.TryPlaceBuilding(worldPos, data, dir, out Vector3 pfPos))
+        if (buildMap.TryGetPlacementCells(worldPos, data, dir, out Vector3 pfPos, out List<BuildCell> cells))
         {
-            Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+            GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+            buildMap.PlaceBuilding(instance.transform, cells);
+        }
+    }
+
+    public void RemoveBuilding(Vector3 worldPos)
+    {
+        if (buildMap.TryRemoveBuildingAtWorldPosition(worldPos, out Transform removedBuilding))
+        {
+            Destroy(removedBuilding.gameObject);
         }
     }
 

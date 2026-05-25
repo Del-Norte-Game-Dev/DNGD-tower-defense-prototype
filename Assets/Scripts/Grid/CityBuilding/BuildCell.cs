@@ -22,6 +22,12 @@ public class BuildCell
         grid.TriggerDebugRefresh(x, y);
     }
 
+    public void ClearBuilding()
+    {
+        placedBuilding = null;
+        grid.TriggerDebugRefresh(x, y);
+    }
+
     public bool CanBuild()
     {
         return placedBuilding == null;
