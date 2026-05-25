@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class MapProvider : GenericSingleton<MapProvider>
 {
-    [SerializeField] private int width = 50;
-    [SerializeField] private int height = 50;
+    [SerializeField] private int width = 100;
+    [SerializeField] private int height = 100;
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private Vector3 origin = Vector3.zero;
     private FlowFieldVisualConfig config;
