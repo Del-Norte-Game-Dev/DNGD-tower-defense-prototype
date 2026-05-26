@@ -21,6 +21,12 @@ public class FlowField
         );
     }
 
+    public void Regenerate()
+    {
+        GenerateIntegrationField(destination);
+        GenerateFlowField();
+    }
+
     public bool TryGenerate(Vector3 worldPosition)
     {
         if (!flowGrid.TryGetGridObject(worldPosition, out FlowFieldCell dest))

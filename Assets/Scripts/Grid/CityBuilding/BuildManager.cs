@@ -3,30 +3,43 @@ using System.Collections.Generic;
 
 public class BuildManager : GenericSingleton<BuildManager>
 {
-    [SerializeField] private int width = 100;
-    [SerializeField] private int height = 100;
-    [SerializeField] private float cellSize = 1f;
-    [SerializeField] private Vector3 origin = Vector3.zero;
+    [SerializeField] private BuildingRegistry buildingRegistry;
+    private BuildingData currentData;
+    private int currentDataIndex = 0;
 
-    [SerializeField] private BuildingData tempBuildingData;
     private BuildMap buildMap;
+    private bool isInitialized;
     private GameObject preview;
     private Renderer[] previewRenderers;
     private BuildingData.Dir currentDir = BuildingData.Dir.Right;
+    private BuildingData previewData;
+
+    public event System.Action<List<Vector2Int>> BuildingPlaced;
+    public event System.Action<List<Vector2Int>> BuildingRemoved;
 
     GridDebugDrawer debugDrawer;
 
-    protected override void Awake()
+    public void Initialize(BuildingRegistry registry, int width, int height, float cellSize, Vector3 origin)
     {
-        base.Awake();
+        if (isInitialized)
+            return;
+
+        buildingRegistry = registry;
+        currentData = registry != null && registry.data.Count > 0 ? registry.data[0] : null;
+        currentDataIndex = 0;
         buildMap = new BuildMap(width, height, cellSize, origin);
-        InitializePreview();
+
+        if (currentData != null)
+            InitializePreview();
 
         GameObject debugObject = new GameObject("BuildGridDebug");
         debugDrawer = debugObject.AddComponent<GridDebugDrawer>();
+        debugObject.transform.SetParent(transform);
         debugDrawer.Initialize(buildMap.BuildGrid);
         debugDrawer.HideAll();
         debugDrawer.SetText(true);
+
+        isInitialized = true;
     }
 
     void Update()
@@ -36,7 +49,7 @@ public class BuildManager : GenericSingleton<BuildManager>
 
         if (Input.GetMouseButtonDown(0))
         {
-            PlaceBuilding(worldPos, tempBuildingData, currentDir);
+            PlaceBuilding(worldPos, currentData, currentDir);
         }
 
         if (Input.GetMouseButtonDown(1))
@@ -48,11 +61,22 @@ public class BuildManager : GenericSingleton<BuildManager>
         {
             Rotate();
         }
+
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            currentData = NextBuildingData();
+        }
     }
+
+    private BuildingData NextBuildingData(){
+        currentDataIndex++;
+        return buildingRegistry.data[currentDataIndex % buildingRegistry.data.Count];
+    }
+
     #region preview
     private void InitializePreview()
     {
-        if (tempBuildingData == null || tempBuildingData.prefab == null)
+        if (currentData == null || currentData.prefab == null)
         {
             return;
         }
@@ -62,8 +86,9 @@ public class BuildManager : GenericSingleton<BuildManager>
             Destroy(preview);
         }
 
-        preview = Instantiate(tempBuildingData.prefab);
-        preview.name = tempBuildingData.prefab.name + "_Preview";
+        preview = Instantiate(currentData.prefab);
+        preview.name = currentData.prefab.name + "_Preview";
+        previewData = currentData;
         RemovePreviewColliders(preview);
         previewRenderers = preview.GetComponentsInChildren<Renderer>();
         SetPreviewMaterials(preview);
@@ -120,7 +145,7 @@ public class BuildManager : GenericSingleton<BuildManager>
 
     private void UpdatePreview(Vector2 worldPos)
     {
-        if (tempBuildingData == null || tempBuildingData.prefab == null)
+        if (currentData == null || currentData.prefab == null)
         {
             if (preview != null)
             {
@@ -129,14 +154,14 @@ public class BuildManager : GenericSingleton<BuildManager>
             return;
         }
 
-        if (preview == null || preview.name != tempBuildingData.prefab.name + "_Preview")
+        if (preview == null || previewData != currentData || preview.name != currentData.prefab.name + "_Preview")
         {
             InitializePreview();
         }
 
-        Vector3 snappedPos = buildMap.GetSnappedPlacementCorner(worldPos, tempBuildingData, currentDir);
+        Vector3 snappedPos = buildMap.GetSnappedPlacementCorner(worldPos, currentData, currentDir);
 
-        if (buildMap.TryGetPlacement(worldPos, tempBuildingData, currentDir, out Vector3 pfPos))
+        if (buildMap.TryGetPlacement(worldPos, currentData, currentDir, out Vector3 pfPos))
         {
             preview.transform.position = pfPos;
             preview.transform.rotation = Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(currentDir));
@@ -163,15 +188,19 @@ public class BuildManager : GenericSingleton<BuildManager>
         if (buildMap.TryGetPlacementCells(worldPos, data, dir, out Vector3 pfPos, out List<BuildCell> cells))
         {
             GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
-            buildMap.PlaceBuilding(instance.transform, cells);
+            if (buildMap.PlaceBuilding(instance.transform, cells))
+            {
+                BuildingPlaced?.Invoke(cells.ConvertAll(cell => new Vector2Int(cell.x, cell.y)));
+            }
         }
     }
 
     public void RemoveBuilding(Vector3 worldPos)
     {
-        if (buildMap.TryRemoveBuildingAtWorldPosition(worldPos, out Transform removedBuilding))
+        if (buildMap.TryRemoveBuildingAtWorldPosition(worldPos, out Transform removedBuilding, out List<Vector2Int> removedCells))
         {
             Destroy(removedBuilding.gameObject);
+            BuildingRemoved?.Invoke(removedCells);
         }
     }
 

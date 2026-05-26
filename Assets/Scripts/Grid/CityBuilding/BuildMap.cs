@@ -106,19 +106,21 @@ public class BuildMap
         return GetPlacementWorldCorner(dir, origin);
     }
 
-    public bool TryRemoveBuildingAtWorldPosition(Vector3 worldPos, out Transform removedBuilding)
+    public bool TryRemoveBuildingAtWorldPosition(Vector3 worldPos, out Transform removedBuilding, out List<Vector2Int> removedCells)
     {
         removedBuilding = null;
+        removedCells = null;
 
         if (!buildGrid.TryGetGridObject(worldPos, out BuildCell firstCell) || firstCell.placedBuilding == null)
             return false;
 
         removedBuilding = firstCell.placedBuilding;
-        ClearBuildingCells(removedBuilding);
-        return true;
+        removedCells = new List<Vector2Int>();
+        ClearBuildingCells(removedBuilding, removedCells);
+        return removedCells.Count > 0;
     }
 
-    private void ClearBuildingCells(Transform buildingTransform)
+    private void ClearBuildingCells(Transform buildingTransform, List<Vector2Int> removedCells)
     {
         for (int x = 0; x < buildGrid.GetWidth(); x++)
         {
@@ -128,6 +130,7 @@ public class BuildMap
                 if (cell != null && cell.placedBuilding == buildingTransform)
                 {
                     cell.ClearBuilding();
+                    removedCells.Add(new Vector2Int(x, y));
                 }
             }
         }

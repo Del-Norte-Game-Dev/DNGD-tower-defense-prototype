@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "BuildingData", menuName = "BuildingData")]
+[CreateAssetMenu(fileName = "BuildingData", menuName = "Building/BuildingData")]
 public class BuildingData : ScriptableObject
 {
     public BuildingShapeType type = BuildingShapeType.Rectangular;
