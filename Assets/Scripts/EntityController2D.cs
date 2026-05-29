@@ -8,6 +8,8 @@ public class EntityController2D : MonoBehaviour
     [SerializeField] private float acceleration = 60f;
     [SerializeField] private float stopEpsilon = 0.01f;
 
+
+    [SerializeField] private int health = 5;
     private Rigidbody2D rb;
 
     private Vector2 currentVelocity;
@@ -59,6 +61,15 @@ public class EntityController2D : MonoBehaviour
         currentVelocity = Vector2.zero;
         desiredVelocity = Vector2.zero;
         rb.linearVelocity = Vector2.zero;
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            EnemyWaveManager.Instance.EnemyDefeated(this.gameObject);
+        }
     }
 
 #if UNITY_EDITOR
