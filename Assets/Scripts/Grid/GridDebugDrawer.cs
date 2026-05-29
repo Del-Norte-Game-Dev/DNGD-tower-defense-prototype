@@ -247,6 +247,7 @@ public class GridDebugDrawer : MonoBehaviour
         {
             cachedColors[x, y] = colorFunc(x, y);
             texture.SetPixel(x, y, cachedColors[x, y]);
+            texture.Apply();
         }
 
         if (textEnabled) UpdateText(x, y);
@@ -255,11 +256,29 @@ public class GridDebugDrawer : MonoBehaviour
 
     private void OnGridRefresh()
     {
-        for (int x = 0; x < width; x++)
-        for (int y = 0; y < height; y++)
-            OnGridChanged(x, y);
+        if (colorEnabled && colorFunc != null)
+        {
+            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                {
+                    cachedColors[x, y] = colorFunc(x, y);
+                    texture.SetPixel(x, y, cachedColors[x, y]);
+                }
+            texture.Apply();
+        }
 
-        texture?.Apply();
+        if (textEnabled)
+        {
+            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                UpdateText(x, y);
+        } 
+        if (spriteEnabled)
+        {
+            for (int x = 0; x < width; x++)
+            for (int y = 0; y < height; y++)
+                UpdateSprite(x, y);
+        } 
     }
     #endregion
 }

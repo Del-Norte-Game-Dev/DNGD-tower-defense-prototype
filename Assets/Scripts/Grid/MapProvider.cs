@@ -1,19 +1,30 @@
+using System;
 using UnityEngine;
 
 public class MapProvider : GenericSingleton<MapProvider>
 {
-    [SerializeField] private int width = 50;
-    [SerializeField] private int height = 50;
+    public event Action CostGridChanged;
+
+    [SerializeField] private int width = 100;
+    [SerializeField] private int height = 100;
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private Vector3 origin = Vector3.zero;
     private FlowFieldVisualConfig config;
     private GridDebugDrawer debugDrawer;
 
     private Grid<MapCell> grid;
+    private bool isInitialized;
 
-    override protected void Awake()
+    public void Initialize(int width, int height, float cellSize, Vector3 origin)
     {
-        base.Awake();
+        if (isInitialized)
+            return;
+
+        this.width = width;
+        this.height = height;
+        this.cellSize = cellSize;
+        this.origin = origin;
+
         grid = new Grid<MapCell>(
             width,
             height,
@@ -24,10 +35,11 @@ public class MapProvider : GenericSingleton<MapProvider>
         InitializeNoiseCosts();
 
         config = GlobalAssets.FlowFieldVisual;
-        debugDrawer = new GameObject("DebugDrawer").AddComponent<GridDebugDrawer>();
+        debugDrawer = new GameObject("MapDebugDrawer").AddComponent<GridDebugDrawer>();
+        debugDrawer.transform.SetParent(transform);
         debugDrawer.Initialize(grid);
 
-        debugDrawer.SetColor(true, 
+        debugDrawer.SetColor(true,
             (x, y) =>
             {
                 grid.TryGetGridObject(x, y, out MapCell cell);
@@ -38,6 +50,7 @@ public class MapProvider : GenericSingleton<MapProvider>
                 return Color.Lerp(config.minCostColor, config.maxCostColor, Mathf.Clamp01(t));
             });
 
+        isInitialized = true;
     }
 
     public Grid<MapCell> GetGrid()
@@ -61,7 +74,8 @@ public class MapProvider : GenericSingleton<MapProvider>
         {
             for (int y = 0; y < grid.GetHeight(); y++)
             {
-                grid.GetGridObject(x, y).cost = 1;
+                grid.GetGridObject(x, y).SetBaseCost(1);
+                grid.GetGridObject(x, y).SetCost(1);
             }
         }
     }
@@ -74,8 +88,8 @@ public class MapProvider : GenericSingleton<MapProvider>
 
     private void InitializeNoiseCosts()
     {
-        seedX = Random.Range(0f, 10000f);
-        seedY = Random.Range(0f, 10000f);
+        seedX = UnityEngine.Random.Range(0f, 10000f);
+        seedY = UnityEngine.Random.Range(0f, 10000f);
         for (int x = 0; x < grid.GetWidth(); x++)
         {
             for (int y = 0; y < grid.GetHeight(); y++)
@@ -83,15 +97,11 @@ public class MapProvider : GenericSingleton<MapProvider>
                 float noise = Mathf.PerlinNoise((x + seedX) * noiseScale, (y + seedY) * noiseScale);
 
                 MapCell cell = grid.GetGridObject(x, y);
+                if (cell == null) continue;
 
-                if (noise > obstacleThreshold)
-                {
-                    cell.cost = byte.MaxValue;
-                }
-                else
-                {
-                    cell.cost = (byte)(1 + Mathf.FloorToInt(noise * 5));
-                }
+                byte cost = noise > obstacleThreshold ? byte.MaxValue : (byte)(1 + Mathf.FloorToInt(noise * 5));
+                cell.SetBaseCost(cost);
+                cell.SetCost(cost);
             }
         }
     }
@@ -99,8 +109,10 @@ public class MapProvider : GenericSingleton<MapProvider>
 
     public void SetCost(int x, int y, byte cost)
     {
-        var cell = grid.GetGridObject(x, y);
-        cell.cost = cost;
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return;
+        cell.SetCost(cost);
+        grid.TriggerDebugRefresh(x, y);
+        CostGridChanged?.Invoke();
     }
 
     public void SetBlocked(int x, int y)
@@ -108,8 +120,11 @@ public class MapProvider : GenericSingleton<MapProvider>
         SetCost(x, y, byte.MaxValue);
     }
 
-    public void SetWalkable(int x, int y, byte cost = 1)
+    public void RestoreOriginalCost(int x, int y)
     {
-        SetCost(x, y, cost);
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return;
+        cell.ResetToOriginalCost();
+        grid.TriggerDebugRefresh(x, y);
+        CostGridChanged?.Invoke();
     }
 }

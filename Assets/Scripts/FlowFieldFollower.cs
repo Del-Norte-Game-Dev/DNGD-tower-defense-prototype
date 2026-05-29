@@ -14,6 +14,11 @@ public class FlowFieldFollower : MonoBehaviour
         controller = GetComponent<EntityController2D>();
     }
 
+    private void Start()
+    {
+        AssignFlowField(FlowFieldManager.Instance.GetFlowField());
+    }
+
     public void SetSelected(bool selected)
     {
         this.selected = selected;
