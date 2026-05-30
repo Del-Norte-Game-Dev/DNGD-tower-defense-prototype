@@ -1,5 +1,7 @@
 using System.Collections.Generic;
+using UnityEditor.Timeline.Actions;
 using UnityEngine;
+using static BuildingData;
 
 public class DefenseTower : MonoBehaviour
 {
@@ -8,6 +10,7 @@ public class DefenseTower : MonoBehaviour
     [SerializeField] private float fireRate = 1f; //shots per second
     [SerializeField] private float bulletSpeed = 10f;
     [SerializeField] private int damage = 10;
+    [SerializeField] private GameObject projectilePrefab; 
 
 
     private EnemyWaveManager enemyManager;
@@ -79,7 +82,15 @@ public class DefenseTower : MonoBehaviour
 
     void Shoot(GameObject target)
     {
-        target.GetComponent<EntityController2D>()?.TakeDamage(10); // stop target movement
+        target.GetComponent<EntityController2D>()?.TakeDamage(10);
+
+        // Instantiate projectile and set its velocity towards the target
+        TowerProjectile projectile = Instantiate(projectilePrefab, transform.position, Quaternion.LookRotation(target.transform.position - transform.position)).GetComponent<TowerProjectile>();
+        if (projectile != null)
+        {
+            Vector2 direction = (target.transform.position - transform.position).normalized;
+            projectile.Init(this, direction * bulletSpeed, Vector3.Distance(transform.position, target.transform.position) / bulletSpeed);
+        }
     }
 
     void OnDrawGizmosSelected()

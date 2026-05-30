@@ -943,6 +943,7 @@ MonoBehaviour:
   maxSpeed: 10
   acceleration: 20
   stopEpsilon: 0.01
+  health: 5
 --- !u!50 &1286111770
 Rigidbody2D:
   serializedVersion: 5
