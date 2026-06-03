@@ -188,6 +188,13 @@ public class BuildManager : GenericSingleton<BuildManager>
         if (buildMap.TryGetPlacementCells(worldPos, data, dir, out Vector3 pfPos, out List<BuildCell> cells))
         {
             GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+
+            if (instance.TryGetComponent<IBuilding>(out IBuilding building))
+            {
+                building.Init();
+            }
+
+
             if (buildMap.PlaceBuilding(instance.transform, cells))
             {
                 BuildingPlaced?.Invoke(cells.ConvertAll(cell => new Vector2Int(cell.x, cell.y)));

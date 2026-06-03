@@ -3,7 +3,7 @@ using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using static BuildingData;
 
-public class DefenseTower : MonoBehaviour
+public class DefenseTower : MonoBehaviour, IBuilding
 {
     [Header("Tower Stats")]
     [SerializeField] private float range = 5f;
@@ -22,11 +22,14 @@ public class DefenseTower : MonoBehaviour
     private float fireTimer = 0f;
 
     private GameObject currentTarget;
+    private Transform towerPos;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+
+    public void Init()
     {
         enemyManager = EnemyWaveManager.Instance;
+
+        towerPos = gameObject.transform.Find("pivot");
 
         contactFilter = new ContactFilter2D();
         contactFilter.SetLayerMask(enemyLayerMask);
@@ -51,9 +54,10 @@ public class DefenseTower : MonoBehaviour
 
     void Retarget()
     {
-        
+        if (towerPos == null)
+            return;
         // Fills hitBuffer with colliders in range — no new list allocated
-        Physics2D.OverlapCircle(transform.position, range, contactFilter, hitBuffer);
+        Physics2D.OverlapCircle(towerPos.position, range, contactFilter, hitBuffer);
 
         if (hitBuffer.Count == 0)
         {
@@ -85,17 +89,17 @@ public class DefenseTower : MonoBehaviour
         target.GetComponent<EntityController2D>()?.TakeDamage(10);
 
         // Instantiate projectile and set its velocity towards the target
-        TowerProjectile projectile = Instantiate(projectilePrefab, transform.position, Quaternion.LookRotation(target.transform.position - transform.position)).GetComponent<TowerProjectile>();
+        TowerProjectile projectile = Instantiate(projectilePrefab, towerPos.position, Quaternion.LookRotation(target.transform.position - towerPos.position)).GetComponent<TowerProjectile>();
         if (projectile != null)
         {
-            Vector2 direction = (target.transform.position - transform.position).normalized;
-            projectile.Init(this, direction * bulletSpeed, Vector3.Distance(transform.position, target.transform.position) / bulletSpeed);
+            Vector2 direction = (target.transform.position - towerPos.position).normalized;
+            projectile.Init(this, direction * bulletSpeed, Vector3.Distance(towerPos.position, target.transform.position) / bulletSpeed);
         }
     }
 
     void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.cyan;
-        Gizmos.DrawWireSphere(transform.position, range);
+        Gizmos.DrawWireSphere(towerPos.position, range);
     }
 }

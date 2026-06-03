@@ -410,7 +410,7 @@ MonoBehaviour:
   zoomSmoothTime: 0.06
   minZoom: 3
   maxZoom: 20
-  allowDragging: 0
+  allowDragging: 1
   dragButton: 323
 --- !u!1 &575291462
 GameObject:
@@ -1184,7 +1184,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1860637004
 Transform:
   m_ObjectHideFlags: 0
