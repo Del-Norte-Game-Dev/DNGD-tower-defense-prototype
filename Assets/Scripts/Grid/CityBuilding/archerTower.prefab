@@ -508,7 +508,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DefenseTower
   range: 5
   fireRate: 1
-  bulletSpeed: 10
+  bulletSpeed: 30
   damage: 10
   projectilePrefab: {fileID: 6786986593276684360, guid: 70b692d3f9e89d545812ba0cf501f604, type: 3}
   enemyLayerMask:
