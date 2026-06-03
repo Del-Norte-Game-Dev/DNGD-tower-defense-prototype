@@ -44,7 +44,16 @@ public class BuildManager : GenericSingleton<BuildManager>
 
     void Update()
     {
-        Vector2 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Vector2 worldPos = Vector2.zero;
+
+        Plane groundPlane = new Plane(Vector3.forward, Vector3.zero);
+        if (groundPlane.Raycast(ray, out float distance))
+        {
+            worldPos = ray.GetPoint(distance);
+        }
+
         UpdatePreview(worldPos);
 
         if (Input.GetMouseButtonDown(0))
