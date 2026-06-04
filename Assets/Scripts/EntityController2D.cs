@@ -1,4 +1,7 @@
 using UnityEngine;
+using UnityEngine.Rendering;
+using static UnityEngine.GraphicsBuffer;
+using static UnityEngine.LowLevelPhysics2D.PhysicsShape;
 
 [RequireComponent(typeof(Rigidbody2D))]
 public class EntityController2D : MonoBehaviour
@@ -10,6 +13,15 @@ public class EntityController2D : MonoBehaviour
 
 
     [SerializeField] private int health = 5;
+
+    [Header("Attack Settings")]
+    [SerializeField] private float attackRange = 5;
+    [SerializeField] private float attackRate = 5; //shots per second
+    [SerializeField] private int attackDamage = 1;
+    private GameObject currentTarget;
+    [SerializeField] private LayerMask buildingLayer;
+    private float fireTimer = 0f;
+
     private Rigidbody2D rb;
 
     private Vector2 currentVelocity;
@@ -18,12 +30,28 @@ public class EntityController2D : MonoBehaviour
     private void Awake()
     {
         rb = GetComponent<Rigidbody2D>();
+
+        InvokeRepeating(nameof(Retarget), 0f, 0.15f);
     }
 
     private void FixedUpdate()
     {
         UpdateVelocity(Time.fixedDeltaTime);
         ApplyMovement();
+
+        if (currentTarget == null) return;
+
+        fireTimer += Time.deltaTime;
+        if (fireTimer >= 1f / attackRate)
+        {
+            if (currentTarget.TryGetComponent<IBuilding>(out IBuilding building))
+            {
+                
+                building.TakeDamage(attackDamage);
+                fireTimer = 0f;
+            }
+            
+        }
     }
 
     public void SetVelocity(Vector2 velocity)
@@ -70,6 +98,53 @@ public class EntityController2D : MonoBehaviour
         {
             EnemyWaveManager.Instance.EnemyDefeated(this.gameObject);
         }
+    }
+
+    void Retarget()
+    {
+
+        Collider2D[] hits = Physics2D.OverlapCircleAll(transform.position, attackRange, buildingLayer);
+
+        if (hits.Length == 0)
+        {
+            currentTarget = null;
+            return;
+        }
+
+        Collider2D priorityTarget = null;
+        Collider2D closestTarget = null;
+        float closestPriorityDist = float.MaxValue;
+        float closestDist = float.MaxValue;
+
+        foreach (Collider2D hit in hits)
+        {
+            float dist = Vector2.Distance(transform.position, hit.transform.position);
+
+            if (hit.CompareTag("Main Tower"))//change later
+            {
+                if (dist < closestPriorityDist)
+                {
+                    closestPriorityDist = dist;
+                    priorityTarget = hit;
+                }
+            }
+            else
+            {
+                if (dist < closestDist)
+                {
+                    closestDist = dist;
+                    closestTarget = hit;
+                }
+            }
+        }
+
+        // attacks main tower first
+        currentTarget = priorityTarget != null ? priorityTarget.gameObject : closestTarget.gameObject;
+    }
+
+    private GameObject GetBuildingInRange()
+    {
+        return Physics2D.OverlapCircle(transform.position, attackRange, buildingLayer).gameObject;
     }
 
 #if UNITY_EDITOR

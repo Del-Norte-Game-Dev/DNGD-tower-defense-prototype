@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7957261722833727265}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: archerTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5280874298774921605}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: visual
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 4192058338838966895}
   - component: {fileID: 7489592721621016010}
   - component: {fileID: 5123656458840823393}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: tower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -166,7 +166,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8782710955965736632}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -201,7 +201,7 @@ GameObject:
   - component: {fileID: 4704679504906548160}
   - component: {fileID: 7724594391755891853}
   - component: {fileID: 2325309879488041784}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Cone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -290,7 +290,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6820638932566407059}
   - component: {fileID: 2872334251640505901}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -382,7 +382,7 @@ GameObject:
   - component: {fileID: 4921564287829016363}
   - component: {fileID: 9108058345136316987}
   - component: {fileID: 5533585544208786094}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: base
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -471,7 +471,8 @@ GameObject:
   m_Component:
   - component: {fileID: 3587528900204106916}
   - component: {fileID: 4320163440744333589}
-  m_Layer: 0
+  - component: {fileID: 6092279300323490149}
+  m_Layer: 7
   m_Name: archerTower
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -514,3 +515,50 @@ MonoBehaviour:
   enemyLayerMask:
     serializedVersion: 2
     m_Bits: 64
+  maxHealth: 100
+--- !u!61 &6092279300323490149
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8797516249818397164}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_ForceSendLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ForceReceiveLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_ContactCaptureLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_CallbackLayers:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_CompositeOperation: 0
+  m_CompositeOrder: 0
+  m_Offset: {x: 0.5, y: 0.5}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0, y: 0}
+    oldSize: {x: 0, y: 0}
+    newSize: {x: 0, y: 0}
+    adaptiveTilingThreshold: 0
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0

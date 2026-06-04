@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4814130934174715851}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: sawmill1pf
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1706494353621201147}
   - component: {fileID: 3642830306291412291}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Square
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -132,7 +132,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2230691552545190285}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -220,9 +220,29 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6544207043104339812, guid: a4b5d819ae662447193214b7ce1397b7, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: -2268493968148393607, guid: a4b5d819ae662447193214b7ce1397b7, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: a4b5d819ae662447193214b7ce1397b7, type: 3}
       propertyPath: m_Name
       value: visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: a4b5d819ae662447193214b7ce1397b7, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 5400828039759563464, guid: a4b5d819ae662447193214b7ce1397b7, type: 3}
+      propertyPath: m_Layer
+      value: 7
+      objectReference: {fileID: 0}
+    - target: {fileID: 7953606483559150473, guid: a4b5d819ae662447193214b7ce1397b7, type: 3}
+      propertyPath: m_Layer
+      value: 7
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:

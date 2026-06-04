@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEditor.Timeline.Actions;
 using UnityEngine;
@@ -24,6 +25,10 @@ public class DefenseTower : MonoBehaviour, IBuilding
     private GameObject currentTarget;
     private Transform towerPos;
 
+    [SerializeField] private int maxHealth = 100;
+    private int currentHealth;
+    private bool damageable = false;
+
 
     public void Init()
     {
@@ -35,7 +40,22 @@ public class DefenseTower : MonoBehaviour, IBuilding
         contactFilter.SetLayerMask(enemyLayerMask);
         contactFilter.useTriggers = true;
 
+        damageable = true;
+        currentHealth = maxHealth;
+
         InvokeRepeating(nameof(Retarget), 0f, 0.15f); // runs every 0.15 seconds to update target based on proximity to base
+    }
+
+    public void TakeDamage(int damage)
+    {
+        if (damageable)
+        {
+            currentHealth -= damage;
+            if (currentHealth <= 0)
+            {
+                BuildManager.Instance.RemoveBuilding(transform.position);
+            }
+        }
     }
 
 
@@ -80,8 +100,6 @@ public class DefenseTower : MonoBehaviour, IBuilding
             }
         }
         currentTarget = closest;
-
-        Debug.Log(hitBuffer);
     }
 
     void Shoot(GameObject target)
