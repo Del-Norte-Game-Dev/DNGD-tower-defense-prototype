@@ -968,6 +968,12 @@ MonoBehaviour:
   acceleration: 20
   stopEpsilon: 0.01
   health: 5
+  attackRange: 5
+  attackRate: 5
+  attackDamage: 1
+  buildingLayer:
+    serializedVersion: 2
+    m_Bits: 0
 --- !u!50 &1286111770
 Rigidbody2D:
   serializedVersion: 5

@@ -1,5 +1,7 @@
-using UnityEngine;
 using System.Collections.Generic;
+using Unity.VisualScripting;
+using UnityEngine;
+using static UnityEditor.ShaderGraph.Internal.KeywordDependentCollection;
 
 public class BuildMap
 {
@@ -63,6 +65,15 @@ public class BuildMap
                 return false;
             }
 
+            if(data.prefab.TryGetComponent<IBuilding>(out IBuilding building))
+            {
+                if (!building.CanPlace(worldPos))
+                {
+                    validCells = null;
+                    return false;
+                }
+            }
+
             validCells.Add(cell);
         }
 
@@ -77,7 +88,7 @@ public class BuildMap
         return new Vector2Int(x, y);
     }
 
-    private static List<Vector2Int> GetRotatedFootprint(List<Vector2Int> footprint, BuildingData.Dir dir)
+    public static List<Vector2Int> GetRotatedFootprint(List<Vector2Int> footprint, BuildingData.Dir dir)
     {
         List<Vector2Int> rotated = new List<Vector2Int>(footprint?.Count ?? 0);
 
