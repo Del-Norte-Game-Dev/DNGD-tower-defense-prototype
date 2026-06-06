@@ -2,8 +2,8 @@ using UnityEngine;
 
 public class ResourceBuilding : MonoBehaviour, IBuilding
 {
-    [SerializeField] private string resourceType; //CHANGE THIS LATER, RN ITS JUST A STRING TO PRINT
-    public string CollectResource()
+    [SerializeField] private ResourceType resourceType; //CHANGE THIS LATER, RN ITS JUST A STRING TO PRINT
+    public ResourceType CollectResource()
     {
         return resourceType;
     }

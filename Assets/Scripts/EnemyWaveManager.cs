@@ -18,6 +18,10 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
 
     [SerializeField] private GameObject enemyPrefab;
 
+
+    public static event Action OnWaveCleared;
+
+
     public void Initialize(int width, int height, float cellSize, Vector3 defaultDestination)
     {
         if (isInitialized)
@@ -71,6 +75,7 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
         {
             waveStarted = false;
             Debug.Log($"Wave {waveNumber} cleared!");
+            OnWaveCleared?.Invoke();
         }
     }
 

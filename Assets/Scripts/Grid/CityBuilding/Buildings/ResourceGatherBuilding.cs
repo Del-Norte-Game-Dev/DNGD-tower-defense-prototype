@@ -4,11 +4,11 @@ using UnityEngine;
 
 public class ResourceGatherBuilding : MonoBehaviour, IBuilding
 {
-    [SerializeField] private string resourceType; //CHANGE THIS LATER, RN ITS JUST A STRING TO PRINT
+    private ResourceType resourceType;
 
     public void Init()
     {
-
+        EnemyWaveManager.OnWaveCleared += CollectResources;
     }
     public bool CanPlace(Vector3 worldPos)
     {
@@ -17,11 +17,17 @@ public class ResourceGatherBuilding : MonoBehaviour, IBuilding
         foreach (Transform neighbor in neighbors.Values)
         {
             if(neighbor.TryGetComponent<ResourceBuilding>(out ResourceBuilding resource)){
+                resourceType = resource.CollectResource();
                 return true;
             }
         }
 
         return false;
+    }
+
+    private void CollectResources()
+    {
+        ResourceManager.Instance.CollectResources(resourceType, 1);
     }
 
 }
