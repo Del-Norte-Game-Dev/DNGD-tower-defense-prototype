@@ -9,6 +9,8 @@ public class GridDebugDrawer : MonoBehaviour
 
     // text
     private TextMeshPro[,] textArray;
+    private string[,] textCache;
+    private GameObject textRoot;
     private bool textEnabled;
 
     //sprite
@@ -19,11 +21,13 @@ public class GridDebugDrawer : MonoBehaviour
     private bool spriteEnabled;
 
     //color
+    private GameObject colorGrid;
     private Texture2D texture;
     private SpriteRenderer colorRenderer;
     private Color[,] cachedColors;
     private Func<int, int, Color> colorFunc;
     private bool colorEnabled;
+    private bool textureDirty;
 
     public void Initialize(IGridDebug grid)
     {
@@ -47,13 +51,14 @@ public class GridDebugDrawer : MonoBehaviour
     #region color
     private void SetupColorTexture()
     {
-        texture = new Texture2D(width, height);
+        texture = new Texture2D(width, height, TextureFormat.RGBA32, false);
         texture.filterMode = FilterMode.Point;
 
         cachedColors = new Color[width, height];
 
-        GameObject go = new GameObject("ColorGrid");
-        colorRenderer = go.AddComponent<SpriteRenderer>();
+        colorGrid = new GameObject("ColorGrid");
+        colorGrid.transform.SetParent(transform);
+        colorRenderer = colorGrid.AddComponent<SpriteRenderer>();
 
         colorRenderer.material = new Material(Shader.Find("Sprites/Default"));
         colorRenderer.sprite = Sprite.Create(
@@ -78,6 +83,9 @@ public class GridDebugDrawer : MonoBehaviour
         {
             if (colorRenderer != null)
                 colorRenderer.gameObject.SetActive(false);
+
+            grid.OnGridObjectChanged -= OnGridChanged;
+            grid.OnGridFullRefresh -= OnGridRefresh;
             return;
         }
 
@@ -90,6 +98,8 @@ public class GridDebugDrawer : MonoBehaviour
 
         colorRenderer.gameObject.SetActive(true);
 
+        grid.OnGridObjectChanged -= OnGridChanged;
+        grid.OnGridFullRefresh -= OnGridRefresh;
         grid.OnGridObjectChanged += OnGridChanged;
         grid.OnGridFullRefresh += OnGridRefresh;
     }
@@ -105,11 +115,13 @@ public class GridDebugDrawer : MonoBehaviour
 
     private void ApplyTexture()
     {
+        if (texture == null) return;
+
         for (int x = 0; x < width; x++)
         for (int y = 0; y < height; y++)
             texture.SetPixel(x, y, cachedColors[x, y]);
 
-        texture.Apply();
+        textureDirty = true;
     }
     #endregion
 
@@ -118,6 +130,9 @@ public class GridDebugDrawer : MonoBehaviour
     private void CreateText()
     {
         textArray = new TextMeshPro[width, height];
+        textCache = new string[width, height];
+        textRoot = new GameObject("TextGrid");
+        textRoot.transform.SetParent(transform);
 
         for (int x = 0; x < width; x++)
         for (int y = 0; y < height; y++)
@@ -129,7 +144,16 @@ public class GridDebugDrawer : MonoBehaviour
                 .WithInitialText(grid.GetDebugValue(x, y))
                 .Build();
 
-            textArray[x, y] = (TextMeshPro)td.textComponent;
+            var tmp = (TextMeshPro)td.textComponent;
+            tmp.enableAutoSizing = false;
+            tmp.autoSizeTextContainer = false;
+            tmp.isTextObjectScaleStatic = true;
+            tmp.richText = false;
+            tmp.SetText(textCache[x, y] = grid.GetDebugValue(x, y));
+
+            var go = tmp.gameObject;
+            go.transform.SetParent(textRoot.transform, false);
+            textArray[x, y] = tmp;
         }
     }
 
@@ -140,10 +164,21 @@ public class GridDebugDrawer : MonoBehaviour
         if (enabled)
         {
             if (textArray == null)
+            {
                 CreateText();
+            }
+            else if (textRoot != null)
+            {
+                textRoot.SetActive(true);
+            }
 
+            grid.OnGridObjectChanged -= OnGridChanged;
+            grid.OnGridFullRefresh -= OnGridRefresh;
             grid.OnGridObjectChanged += OnGridChanged;
             grid.OnGridFullRefresh += OnGridRefresh;
+
+            if (textArray != null)
+                RefreshAllText();
         }
         else
         {
@@ -157,18 +192,29 @@ public class GridDebugDrawer : MonoBehaviour
     private void UpdateText(int x, int y)
     {
         if (!textEnabled || textArray == null) return;
-        textArray[x, y].text = grid.GetDebugValue(x, y);
+
+        string newText = grid.GetDebugValue(x, y);
+        if (textCache[x, y] == newText) return;
+
+        textCache[x, y] = newText;
+        textArray[x, y].SetText(newText);
+    }
+
+    private void RefreshAllText()
+    {
+        if (textArray == null) return;
+
+        for (int x = 0; x < width; x++)
+        for (int y = 0; y < height; y++)
+            UpdateText(x, y);
     }
 
     private void ClearText()
     {
-        if (textArray == null) return;
-
-        foreach (var t in textArray)
-            if (t) Destroy(t.gameObject);
-
-        textArray = null;
+        if (textRoot != null)
+            textRoot.SetActive(false);
     }
+
     #endregion
 
     #region sprite
@@ -176,6 +222,7 @@ public class GridDebugDrawer : MonoBehaviour
     {
         spriteArray = new SpriteRenderer[width, height];
         spriteRoot = new GameObject("SpriteGrid");
+        spriteRoot.transform.SetParent(transform);
 
         for (int x = 0; x < width; x++)
         for (int y = 0; y < height; y++)
@@ -208,8 +255,16 @@ public class GridDebugDrawer : MonoBehaviour
             rotationFunc = rot ?? rotationFunc;
 
             if (spriteArray == null)
+            {
                 CreateSprites();
+            }
+            else if (spriteArray != null)
+            {
+                spriteRoot.SetActive(true);
+            }
 
+            grid.OnGridObjectChanged -= OnGridChanged;
+            grid.OnGridFullRefresh -= OnGridRefresh;
             grid.OnGridObjectChanged += OnGridChanged;
             grid.OnGridFullRefresh += OnGridRefresh;
         }
@@ -235,8 +290,8 @@ public class GridDebugDrawer : MonoBehaviour
 
     private void ClearSprites()
     {
-        if (spriteRoot) Destroy(spriteRoot);
-        spriteArray = null;
+        if (spriteRoot != null)
+            spriteRoot.SetActive(false);
     }
     #endregion
 
@@ -247,7 +302,7 @@ public class GridDebugDrawer : MonoBehaviour
         {
             cachedColors[x, y] = colorFunc(x, y);
             texture.SetPixel(x, y, cachedColors[x, y]);
-            texture.Apply();
+            textureDirty = true;
         }
 
         if (textEnabled) UpdateText(x, y);
@@ -264,7 +319,7 @@ public class GridDebugDrawer : MonoBehaviour
                     cachedColors[x, y] = colorFunc(x, y);
                     texture.SetPixel(x, y, cachedColors[x, y]);
                 }
-            texture.Apply();
+            textureDirty = true;
         }
 
         if (textEnabled)
@@ -281,4 +336,13 @@ public class GridDebugDrawer : MonoBehaviour
         } 
     }
     #endregion
+
+    private void LateUpdate()
+    {
+        if (textureDirty && texture != null)
+        {
+            texture.Apply(false);
+            textureDirty = false;
+        }
+    }
 }

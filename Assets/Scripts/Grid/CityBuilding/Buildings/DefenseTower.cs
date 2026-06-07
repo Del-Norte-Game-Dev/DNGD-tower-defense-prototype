@@ -11,6 +11,7 @@ public class DefenseTower : MonoBehaviour, IBuilding
     [SerializeField] private float fireRate = 1f; //shots per second
     [SerializeField] private float bulletSpeed = 10f;
     [SerializeField] private int damage = 10;
+    [SerializeField] private float retargetInterval = 0.25f;
     [SerializeField] private GameObject projectilePrefab; 
 
 
@@ -18,7 +19,7 @@ public class DefenseTower : MonoBehaviour, IBuilding
     [SerializeField] private LayerMask enemyLayerMask;
 
 
-    private List<Collider2D> hitBuffer = new List<Collider2D>();
+    private Collider2D[] retargetBuffer;
     private ContactFilter2D contactFilter;
     private float fireTimer = 0f;
 
@@ -40,10 +41,11 @@ public class DefenseTower : MonoBehaviour, IBuilding
         contactFilter.SetLayerMask(enemyLayerMask);
         contactFilter.useTriggers = true;
 
+        retargetBuffer = new Collider2D[48];
         damageable = true;
         currentHealth = maxHealth;
 
-        InvokeRepeating(nameof(Retarget), 0f, 0.15f); // runs every 0.15 seconds to update target based on proximity to base
+        InvokeRepeating(nameof(Retarget), 0f, retargetInterval); // runs periodically to update target based on proximity to base
     }
 
     public void TakeDamage(int damage)
@@ -76,35 +78,40 @@ public class DefenseTower : MonoBehaviour, IBuilding
     {
         if (towerPos == null)
             return;
-        // Fills hitBuffer with colliders in range — no new list allocated
-        Physics2D.OverlapCircle(towerPos.position, range, contactFilter, hitBuffer);
 
-        if (hitBuffer.Count == 0)
+        int hitCount = Physics2D.OverlapCircle(towerPos.position, range, contactFilter, retargetBuffer);
+        if (hitCount == 0)
         {
             currentTarget = null;
             return;
         }
 
         GameObject closest = null;
-        float closestDist = Mathf.Infinity;
+        float closestSqr = float.PositiveInfinity;
+        Vector2 destination = enemyManager.defaultDestination;
 
-        foreach (Collider2D hit in hitBuffer)
+        for (int i = 0; i < hitCount; i++)
         {
+            Collider2D hit = retargetBuffer[i];
             if (hit == null) continue;
 
-            float dist = Vector2.Distance(hit.transform.position, enemyManager.defaultDestination);
-            if (dist < closestDist)
+            float sqrDist = ((Vector2)hit.transform.position - destination).sqrMagnitude;
+            if (sqrDist < closestSqr)
             {
-                closestDist = dist;
+                closestSqr = sqrDist;
                 closest = hit.gameObject;
             }
         }
+
         currentTarget = closest;
     }
 
     void Shoot(GameObject target)
     {
-        target.GetComponent<EntityController2D>()?.TakeDamage(10);
+        if (target.TryGetComponent<EntityController2D>(out EntityController2D enemy))
+        {
+            enemy.TakeDamage(damage);
+        }
 
         // Instantiate projectile and set its velocity towards the target
         TowerProjectile projectile = Instantiate(projectilePrefab, towerPos.position, Quaternion.LookRotation(target.transform.position - towerPos.position)).GetComponent<TowerProjectile>();

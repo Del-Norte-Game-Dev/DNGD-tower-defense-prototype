@@ -37,7 +37,10 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-
+        TextDisplayManager.NewUI(new Vector2(750, -450), 1.5f)
+                .WithDraggable()
+                .WithTrackedProvider(() => EntityController2D.ENTITY_COUNT.ToString())
+                .Build();
     }
 
     // Update is called once per frame

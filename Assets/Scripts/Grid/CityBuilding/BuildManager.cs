@@ -6,6 +6,7 @@ using static BuildingData;
 public class BuildManager : GenericSingleton<BuildManager>
 {
     [SerializeField] private BuildingRegistry buildingRegistry;
+    [SerializeField] bool enableDebug = false;
     private BuildingData currentData;
     private int currentDataIndex = 0;
 
@@ -36,15 +37,15 @@ public class BuildManager : GenericSingleton<BuildManager>
 
         if (currentData != null)
             InitializePreview();
+        isInitialized = true;
 
+        if (!enableDebug) return;
         GameObject debugObject = new GameObject("BuildGridDebug");
         debugDrawer = debugObject.AddComponent<GridDebugDrawer>();
         debugObject.transform.SetParent(transform);
         debugDrawer.Initialize(buildMap.BuildGrid);
         debugDrawer.HideAll();
         debugDrawer.SetText(true);
-
-        isInitialized = true;
     }
 
     void Update()

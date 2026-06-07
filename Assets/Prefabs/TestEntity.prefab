@@ -101,7 +101,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8800227823312085850}
   - component: {fileID: 2067465990993770366}
-  - component: {fileID: 1565509627774739240}
+  - component: {fileID: 2753536355054122558}
   - component: {fileID: 6032577740293034480}
   - component: {fileID: 8146983667078264209}
   m_Layer: 6
@@ -140,33 +140,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlowFieldFollower
   moveSpeed: 5
---- !u!50 &1565509627774739240
-Rigidbody2D:
-  serializedVersion: 5
+  directionRefreshInterval: 0.12
+--- !u!114 &2753536355054122558
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1944488623986578665}
-  m_BodyType: 0
-  m_Simulated: 1
-  m_UseFullKinematicContacts: 0
-  m_UseAutoMass: 0
-  m_Mass: 1
-  m_LinearDamping: 0
-  m_AngularDamping: 0.05
-  m_GravityScale: 0
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_Interpolate: 1
-  m_SleepingMode: 1
-  m_CollisionDetection: 0
-  m_Constraints: 0
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 06e46b5afb3a740f98774869e3b45a95, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EntityMovement2D
+  maxSpeed: 10
+  acceleration: 60
+  stopEpsilon: 0.01
 --- !u!114 &6032577740293034480
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -179,13 +168,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cac24fc600104859a725ffeda397b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityController2D
-  maxSpeed: 10
-  acceleration: 20
-  stopEpsilon: 0.01
   health: 5
   attackRange: 5
   attackRate: 5
   attackDamage: 1
+  retargetInterval: 0.25
   buildingLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -223,7 +210,7 @@ BoxCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.15}
   m_SpriteTilingProperty:
     border: {x: 0, y: 0, z: 0, w: 0}
     pivot: {x: 0, y: 0}
