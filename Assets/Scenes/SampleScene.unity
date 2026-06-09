@@ -599,7 +599,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 39067be84f3fe4b2c95eb53f69e09cdd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlowFieldManager
-  enableDebug: 0
+  enableDebug: 1
   regenerateDelay: 0.05
 --- !u!1 &786768609
 GameObject:

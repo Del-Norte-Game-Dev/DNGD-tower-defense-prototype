@@ -95,7 +95,7 @@ public class MapProvider : GenericSingleton<MapProvider>
             for (int y = 0; y < grid.GetHeight(); y++)
             {
                 float noise = Mathf.PerlinNoise((x + seedX) * noiseScale, (y + seedY) * noiseScale); // can return value outside of [0f, 1f]
-                Mathf.Clamp01(noise);
+                noise = Mathf.Clamp01(noise);
                 
                 MapCell cell = grid.GetGridObject(x, y);
                 if (cell == null) continue;
