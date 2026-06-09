@@ -65,15 +65,16 @@ public class FlowField
         {
             FlowFieldCell cur = queue.Dequeue();
 
-            foreach (var neighbor in flowGrid.GetNeighbors(cur.x, cur.y, Grid<FlowFieldCell>.DIR8_ManhattanBias))
+            foreach (Vector2Int direction in Grid<FlowFieldCell>.DIR8_ManhattanBias)
             {
-                MapCell mapCell = costGrid.GetGridObject(neighbor.x, neighbor.y);
+                if (!flowGrid.TryGetGridObject(cur.x + direction.x, cur.y + direction.y, out FlowFieldCell neighbor))
+                    continue;
 
+                MapCell mapCell = costGrid.GetGridObject(neighbor.x, neighbor.y);
                 if (!mapCell.IsWalkable())
                     continue;
 
                 int newCost = cur.integrationCost + mapCell.cost;
-
                 if (newCost < neighbor.integrationCost)
                 {
                     neighbor.integrationCost = newCost;
@@ -90,7 +91,6 @@ public class FlowField
             for (int y = 0; y < flowGrid.GetHeight(); y++)
             {
                 var cell = flowGrid.GetGridObject(x, y);
-
                 if (cell.integrationCost == int.MaxValue)
                 {
                     cell.flowDirection = Vector2.zero;
@@ -100,8 +100,11 @@ public class FlowField
                 FlowFieldCell best = null;
                 int bestCost = cell.integrationCost;
 
-                foreach (var neighbor in flowGrid.GetNeighbors(x, y, Grid<FlowFieldCell>.DIR8_ManhattanBias))
+                foreach (Vector2Int direction in Grid<FlowFieldCell>.DIR8_ManhattanBias)
                 {
+                    if (!flowGrid.TryGetGridObject(x + direction.x, y + direction.y, out FlowFieldCell neighbor))
+                        continue;
+
                     if (neighbor.integrationCost < bestCost)
                     {
                         bestCost = neighbor.integrationCost;

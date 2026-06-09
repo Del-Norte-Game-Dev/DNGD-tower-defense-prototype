@@ -1,76 +1,161 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D))]
 public class EntityController2D : MonoBehaviour
 {
-    [Header("Movement Settings")]
-    [SerializeField] private float maxSpeed = 10f;
-    [SerializeField] private float acceleration = 60f;
-    [SerializeField] private float stopEpsilon = 0.01f;
+    public static int ENTITY_COUNT;
 
-    private Rigidbody2D rb;
+    private EntityMovement2D movement;
 
-    private Vector2 currentVelocity;
-    private Vector2 desiredVelocity;
+    [SerializeField] private int health = 5;
+
+    [Header("Attack Settings")]
+    [SerializeField] private float attackRange = 5;
+    [SerializeField] private float attackRate = 5; //shots per second
+    [SerializeField] private int attackDamage = 1;
+    [SerializeField] private float retargetInterval = 0.25f;
+    private GameObject currentTarget;
+    [SerializeField] private LayerMask buildingLayer;
+    private float fireTimer = 0f;
+
+    private readonly Collider2D[] retargetBuffer = new Collider2D[64];
+    private ContactFilter2D buildingContactFilter;
+    private float retargetTimer;
+    private float attackRangeSqr => attackRange * attackRange;
 
     private void Awake()
     {
-        rb = GetComponent<Rigidbody2D>();
+        movement = GetComponent<EntityMovement2D>();
+
+        buildingContactFilter = new ContactFilter2D();
+        buildingContactFilter.SetLayerMask(buildingLayer);
+        buildingContactFilter.useTriggers = true;
+
+        retargetTimer = retargetInterval;
+    }
+
+    void OnEnable()
+    {
+        ENTITY_COUNT++;
+    }
+
+    private void OnDisable()
+    {
+        ENTITY_COUNT--;
     }
 
     private void FixedUpdate()
     {
-        UpdateVelocity(Time.fixedDeltaTime);
-        ApplyMovement();
+        retargetTimer -= Time.fixedDeltaTime;
+        if (retargetTimer <= 0f)
+        {
+            retargetTimer += retargetInterval;
+            if (!IsCurrentTargetValid())
+                Retarget();
+        }
+
+        if (currentTarget == null) return;
+
+        fireTimer += Time.deltaTime;
+        if (fireTimer >= 1f / attackRate)
+        {
+            if (currentTarget.TryGetComponent<IBuilding>(out IBuilding building))
+            {
+                building.TakeDamage(attackDamage);
+                fireTimer = 0f;
+            }
+        }
     }
 
     public void SetVelocity(Vector2 velocity)
     {
-        desiredVelocity = Vector2.ClampMagnitude(velocity, maxSpeed);
-
-        if (desiredVelocity.sqrMagnitude < stopEpsilon * stopEpsilon)
+        if (movement != null)
         {
-            desiredVelocity = Vector2.zero;
+            movement.SetVelocity(velocity);
         }
-    }
-
-    private void UpdateVelocity(float deltaTime)
-    {
-        //smooth
-        currentVelocity = Vector2.MoveTowards(
-            currentVelocity,
-            desiredVelocity,
-            acceleration * deltaTime
-        );
-    }
-
-    private void ApplyMovement()
-    {
-        rb.linearVelocity = currentVelocity;
     }
 
     public Vector2 GetVelocity()
     {
-        return currentVelocity;
+        return movement != null ? movement.CurrentVelocity : Vector2.zero;
     }
 
     public void Stop()
     {
-        currentVelocity = Vector2.zero;
-        desiredVelocity = Vector2.zero;
-        rb.linearVelocity = Vector2.zero;
+        movement?.Stop();
+    }
+
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+        if (health <= 0)
+        {
+            EnemyWaveManager.Instance.EnemyDefeated(this.gameObject);
+        }
+    }
+
+    void Retarget()
+    {
+        int hitCount = Physics2D.OverlapCircle(transform.position, attackRange, buildingContactFilter, retargetBuffer);
+
+        if (hitCount == 0)
+        {
+            currentTarget = null;
+            return;
+        }
+
+        Collider2D priorityTarget = null;
+        Collider2D closestTarget = null;
+        float closestPrioritySqr = float.MaxValue;
+        float closestSqr = float.MaxValue;
+        Vector2 position = transform.position;
+
+        for (int i = 0; i < hitCount; i++)
+        {
+            Collider2D hit = retargetBuffer[i];
+            if (hit == null) continue;
+
+            float sqrDist = (position - (Vector2)hit.transform.position).sqrMagnitude;
+            if (hit.CompareTag("Main Tower")) //change later
+            {
+                if (sqrDist < closestPrioritySqr)
+                {
+                    closestPrioritySqr = sqrDist;
+                    priorityTarget = hit;
+                }
+            }
+            else if (sqrDist < closestSqr)
+            {
+                closestSqr = sqrDist;
+                closestTarget = hit;
+            }
+        }
+
+        currentTarget = priorityTarget != null ? priorityTarget.gameObject : closestTarget?.gameObject;
+    }
+
+    private bool IsCurrentTargetValid()
+    {
+        if (currentTarget == null) return false;
+        if (!currentTarget.activeInHierarchy) return false;
+
+        var targetPosition = (Vector2)currentTarget.transform.position;
+        if (((Vector2)transform.position - targetPosition).sqrMagnitude > attackRangeSqr) return false;
+
+        return currentTarget.TryGetComponent<IBuilding>(out _);
+    }
+
+    private GameObject GetBuildingInRange()
+    {
+        return Physics2D.OverlapCircle(transform.position, attackRange, buildingLayer)?.gameObject;
     }
 
 #if UNITY_EDITOR
     private void OnDrawGizmosSelected()
     {
-        //current velocity (green)
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine(transform.position, transform.position + (Vector3)currentVelocity);
+        if (movement == null) return;
 
-        //desired velocity (blue)
-        Gizmos.color = Color.blue;
-        Gizmos.DrawLine(transform.position, transform.position + (Vector3)desiredVelocity);
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine(transform.position, transform.position + (Vector3)movement.CurrentVelocity);
     }
 #endif
 }

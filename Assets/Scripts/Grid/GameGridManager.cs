@@ -16,6 +16,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
     private MapProvider mapProvider;
     private FlowFieldManager flowFieldManager;
     private BuildManager buildManager;
+    private EnemyWaveManager enemyWaveManager;
 
     protected override void Awake()
     {
@@ -24,6 +25,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         mapProvider = CreateOrFindManager<MapProvider>("MapProvider");
         flowFieldManager = CreateOrFindManager<FlowFieldManager>("FlowFieldManager");
         buildManager = CreateOrFindManager<BuildManager>("BuildManager");
+        enemyWaveManager = CreateOrFindManager<EnemyWaveManager>("EnemyWaveManager");
 
         InitializeManagers();
         SubscribeEvents();
@@ -54,6 +56,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         mapProvider.Initialize(width, height, cellSize, origin);
         flowFieldManager.Initialize(mapProvider, defaultDestination);
         buildManager.Initialize(buildingRegistry, width, height, cellSize, origin);
+        enemyWaveManager.Initialize(width, height, cellSize, defaultDestination);
     }
 
     private void SubscribeEvents()

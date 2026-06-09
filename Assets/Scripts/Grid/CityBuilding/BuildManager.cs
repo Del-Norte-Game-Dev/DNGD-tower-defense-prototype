@@ -1,9 +1,12 @@
-using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
+using UnityEngine;
+using static BuildingData;
 
 public class BuildManager : GenericSingleton<BuildManager>
 {
     [SerializeField] private BuildingRegistry buildingRegistry;
+    [SerializeField] bool enableDebug = false;
     private BuildingData currentData;
     private int currentDataIndex = 0;
 
@@ -16,6 +19,9 @@ public class BuildManager : GenericSingleton<BuildManager>
 
     public event System.Action<List<Vector2Int>> BuildingPlaced;
     public event System.Action<List<Vector2Int>> BuildingRemoved;
+
+    private Dictionary<Vector2Int, Transform> surroundingCache = new Dictionary<Vector2Int, Transform>();
+
 
     GridDebugDrawer debugDrawer;
 
@@ -31,20 +37,29 @@ public class BuildManager : GenericSingleton<BuildManager>
 
         if (currentData != null)
             InitializePreview();
+        isInitialized = true;
 
+        if (!enableDebug) return;
         GameObject debugObject = new GameObject("BuildGridDebug");
         debugDrawer = debugObject.AddComponent<GridDebugDrawer>();
         debugObject.transform.SetParent(transform);
         debugDrawer.Initialize(buildMap.BuildGrid);
         debugDrawer.HideAll();
         debugDrawer.SetText(true);
-
-        isInitialized = true;
     }
 
     void Update()
     {
-        Vector2 worldPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+
+        Vector2 worldPos = Vector2.zero;
+
+        Plane groundPlane = new Plane(Vector3.forward, Vector3.zero);
+        if (groundPlane.Raycast(ray, out float distance))
+        {
+            worldPos = ray.GetPoint(distance);
+        }
+
         UpdatePreview(worldPos);
 
         if (Input.GetMouseButtonDown(0))
@@ -188,6 +203,13 @@ public class BuildManager : GenericSingleton<BuildManager>
         if (buildMap.TryGetPlacementCells(worldPos, data, dir, out Vector3 pfPos, out List<BuildCell> cells))
         {
             GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+
+            if (instance.TryGetComponent<IBuilding>(out IBuilding building))
+            {
+                building.Init();
+            }
+
+
             if (buildMap.PlaceBuilding(instance.transform, cells))
             {
                 BuildingPlaced?.Invoke(cells.ConvertAll(cell => new Vector2Int(cell.x, cell.y)));
@@ -215,5 +237,49 @@ public class BuildManager : GenericSingleton<BuildManager>
         {
             Destroy(preview);
         }
+    }
+
+    //checks surronding buildings in a radius and returns a dictionary of their relative positions and transforms
+    public Dictionary<Vector2Int, Transform> GetSurroundingBuildings(Vector3 worldPos, int radius = 1)
+    {
+
+        surroundingCache.Clear();
+        Vector2 reversed = (Vector2)preview.transform.position - BuildingData.GetRotatedVector(currentDir, -0.5f, -0.5f) - new Vector2(0.5f, 0.5f);
+        buildMap.BuildGrid.GetXY(reversed, out int xPos, out int yPos);
+        Vector2Int cellPos = new Vector2Int(xPos, yPos);
+        List<Vector2Int> footprint = BuildMap.GetRotatedFootprint(currentData.footprint, currentDir);
+
+        List<Vector2Int> checkedOffsets = new List<Vector2Int>();
+
+
+        foreach (Vector2Int offset in footprint)
+        {
+            for (int x = -radius; x <= radius; x++)
+            {
+                for (int y = -radius; y <= radius; y++)
+                {
+                    if (x == 0 && y == 0) continue;
+
+                    int checkX = offset.x + x + cellPos.x;
+                    int checkY = offset.y + y + cellPos.y;
+
+                    Vector2Int checkPos = new Vector2Int(checkX, checkY);
+
+                    // skip cells that are part of the same building
+                    if (footprint.Contains(new Vector2Int(checkX - cellPos.x, checkY - cellPos.y))) continue;
+                    
+                    if (buildMap.BuildGrid.TryGetGridObject(checkX, checkY, out BuildCell neighborCell))
+                    {
+                        //Debug.Log(checkX + " , " + checkY + "  |  " + neighborCell.placedBuilding);
+                        if (neighborCell.placedBuilding != null)
+                            surroundingCache[new Vector2Int(checkX - cellPos.x, checkY - cellPos.y)] = neighborCell.placedBuilding;
+                    }
+                                        checkedOffsets.Add(checkPos);
+                    
+                }
+            }
+        }
+
+        return surroundingCache;
     }
 }
