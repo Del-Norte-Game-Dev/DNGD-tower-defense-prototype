@@ -39,13 +39,15 @@ public class BuildManager : GenericSingleton<BuildManager>
             InitializePreview();
         isInitialized = true;
 
-        if (!enableDebug) return;
-        GameObject debugObject = new GameObject("BuildGridDebug");
-        debugDrawer = debugObject.AddComponent<GridDebugDrawer>();
-        debugObject.transform.SetParent(transform);
-        debugDrawer.Initialize(buildMap.BuildGrid);
-        debugDrawer.HideAll();
-        debugDrawer.SetText(true);
+        if (enableDebug)
+        {
+            GameObject debugObject = new GameObject("BuildGridDebug");
+            debugDrawer = debugObject.AddComponent<GridDebugDrawer>();
+            debugObject.transform.SetParent(transform);
+            debugDrawer.Initialize(buildMap.BuildGrid);
+            debugDrawer.HideAll();
+            debugDrawer.SetText(true);
+        }
     }
 
     void Update()
@@ -196,25 +198,20 @@ public class BuildManager : GenericSingleton<BuildManager>
     public void PlaceBuilding(Vector3 worldPos, BuildingData data, BuildingData.Dir dir)
     {
         if (data == null)
-        {
             return;
-        }
 
-        if (buildMap.TryGetPlacementCells(worldPos, data, dir, out Vector3 pfPos, out List<BuildCell> cells))
-        {
-            GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+        if (!buildMap.TryGetPlacementCells(worldPos, data, dir, out Vector3 pfPos, out List<BuildCell> cells))
+            return;
 
-            if (instance.TryGetComponent<IBuilding>(out IBuilding building))
-            {
-                building.Init();
-            }
+        if (!ResourceManager.Instance.SpendResources(data.cost))
+            return;
+        
+        GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+        if (instance.TryGetComponent<IBuilding>(out IBuilding building))
+            building.Init();
 
-
-            if (buildMap.PlaceBuilding(instance.transform, cells))
-            {
-                BuildingPlaced?.Invoke(cells.ConvertAll(cell => new Vector2Int(cell.x, cell.y)));
-            }
-        }
+        if (buildMap.PlaceBuilding(instance.transform, cells))
+            BuildingPlaced?.Invoke(cells.ConvertAll(cell => new Vector2Int(cell.x, cell.y)));
     }
 
     public void RemoveBuilding(Vector3 worldPos)

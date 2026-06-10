@@ -1,17 +1,26 @@
 using UnityEngine;
 using System.Collections.Generic;
 
+[System.Serializable]
+public struct ResourceEntry
+{
+    public ResourceType type;
+    public int amount;
+}
+
 [CreateAssetMenu(fileName = "BuildingData", menuName = "Building/BuildingData")]
 public class BuildingData : ScriptableObject
 {
     public BuildingShapeType type = BuildingShapeType.Rectangular;
+
+    
+    public List<ResourceEntry> cost;
 
     public GameObject prefab;
 
     [Header("Rectangular")]
     public Vector2Int size;
     private Vector2Int _lastSize;
-
     [Header("Irregular")]
     public List<Vector2Int> footprint;
 

@@ -645,6 +645,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af7a5906e907bc54189619bc0131f677, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ResourceManager
+  startingResources:
+  - type: 0
+    amount: 10
 --- !u!1 &839497784
 GameObject:
   m_ObjectHideFlags: 0
@@ -915,7 +918,7 @@ MonoBehaviour:
     m_Top: 35
     m_Bottom: 0
   m_ChildAlignment: 0
-  m_Spacing: 50
+  m_Spacing: 200
   m_ChildForceExpandWidth: 0
   m_ChildForceExpandHeight: 0
   m_ChildControlWidth: 0
