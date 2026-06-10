@@ -1,15 +1,16 @@
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 public class ResourceGatherBuilding : MonoBehaviour, IBuilding
 {
     private ResourceType resourceType;
+    [SerializeField] private float maxHealth = 10f;
 
     public void Init()
     {
         EnemyWaveManager.OnWaveCleared += CollectResources;
     }
+
     public bool CanPlace(Vector3 worldPos)
     {
         Dictionary<Vector2Int, Transform> neighbors = BuildManager.Instance.GetSurroundingBuildings(worldPos);

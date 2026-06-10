@@ -1,23 +1,19 @@
-using System;
-using System.Collections.Generic;
-using UnityEditor.Timeline.Actions;
 using UnityEngine;
 using static BuildingData;
 
+[RequireComponent(typeof(HealthComponent))]
 public class DefenseTower : MonoBehaviour, IBuilding
 {
     [Header("Tower Stats")]
     [SerializeField] private float range = 5f;
     [SerializeField] private float fireRate = 1f; //shots per second
     [SerializeField] private float bulletSpeed = 10f;
-    [SerializeField] private int damage = 10;
+    [SerializeField] private float damage = 1f;
     [SerializeField] private float retargetInterval = 0.25f;
     [SerializeField] private GameObject projectilePrefab; 
 
-
     private EnemyWaveManager enemyManager;
     [SerializeField] private LayerMask enemyLayerMask;
-
 
     private Collider2D[] retargetBuffer;
     private ContactFilter2D contactFilter;
@@ -26,9 +22,7 @@ public class DefenseTower : MonoBehaviour, IBuilding
     private GameObject currentTarget;
     private Transform towerPos;
 
-    [SerializeField] private int maxHealth = 100;
-    private int currentHealth;
-    private bool damageable = false;
+    private HealthComponent healthComponent;
 
 
     public void Init()
@@ -42,24 +36,16 @@ public class DefenseTower : MonoBehaviour, IBuilding
         contactFilter.useTriggers = true;
 
         retargetBuffer = new Collider2D[48];
-        damageable = true;
-        currentHealth = maxHealth;
+        healthComponent = GetComponent<HealthComponent>();
+        healthComponent.OnDead += OnDead;
 
         InvokeRepeating(nameof(Retarget), 0f, retargetInterval); // runs periodically to update target based on proximity to base
     }
 
-    public void TakeDamage(int damage)
+    private void OnDead()
     {
-        if (damageable)
-        {
-            currentHealth -= damage;
-            if (currentHealth <= 0)
-            {
-                BuildManager.Instance.RemoveBuilding(transform.position);
-            }
-        }
+        BuildManager.Instance.RemoveBuilding(transform.position);
     }
-
 
     // Update is called once per frame
     void Update()
@@ -108,9 +94,9 @@ public class DefenseTower : MonoBehaviour, IBuilding
 
     void Shoot(GameObject target)
     {
-        if (target.TryGetComponent<EntityController2D>(out EntityController2D enemy))
+        if (target.TryGetComponent<HealthComponent>(out HealthComponent enemyHealth))
         {
-            enemy.TakeDamage(damage);
+            enemyHealth.TakeDamage(damage);
         }
 
         // Instantiate projectile and set its velocity towards the target
@@ -124,6 +110,11 @@ public class DefenseTower : MonoBehaviour, IBuilding
 
     void OnDrawGizmosSelected()
     {
+        if (towerPos == null)
+        towerPos = transform.Find("pivot");
+
+        if (towerPos == null) return;
+
         Gizmos.color = Color.cyan;
         Gizmos.DrawWireSphere(towerPos.position, range);
     }

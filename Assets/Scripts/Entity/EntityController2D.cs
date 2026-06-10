@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public class EntityController2D : MonoBehaviour
@@ -6,12 +7,13 @@ public class EntityController2D : MonoBehaviour
 
     private EntityMovement2D movement;
 
-    [SerializeField] private int health = 5;
+    [SerializeField] private float maxHealth = 5;
+    private HealthComponent health;
 
     [Header("Attack Settings")]
     [SerializeField] private float attackRange = 5;
     [SerializeField] private float attackRate = 5; //shots per second
-    [SerializeField] private int attackDamage = 1;
+    [SerializeField] private float attackDamage = 1f;
     [SerializeField] private float retargetInterval = 0.25f;
     private GameObject currentTarget;
     [SerializeField] private LayerMask buildingLayer;
@@ -31,6 +33,11 @@ public class EntityController2D : MonoBehaviour
         buildingContactFilter.useTriggers = true;
 
         retargetTimer = retargetInterval;
+
+        health = GetComponent<HealthComponent>();
+        health.OnDead += OnDead;
+
+
     }
 
     void OnEnable()
@@ -58,7 +65,7 @@ public class EntityController2D : MonoBehaviour
         fireTimer += Time.deltaTime;
         if (fireTimer >= 1f / attackRate)
         {
-            if (currentTarget.TryGetComponent<IBuilding>(out IBuilding building))
+            if (currentTarget.TryGetComponent<HealthComponent>(out HealthComponent building))
             {
                 building.TakeDamage(attackDamage);
                 fireTimer = 0f;
@@ -84,13 +91,9 @@ public class EntityController2D : MonoBehaviour
         movement?.Stop();
     }
 
-    public void TakeDamage(int damage)
+    private void OnDead()
     {
-        health -= damage;
-        if (health <= 0)
-        {
-            EnemyWaveManager.Instance.EnemyDefeated(this.gameObject);
-        }
+        EnemyWaveManager.Instance.EnemyDefeated(this.gameObject);
     }
 
     void Retarget()
