@@ -24,6 +24,11 @@ public class BuildingData : ScriptableObject
     [Header("Irregular")]
     public List<Vector2Int> footprint;
 
+    [Header("Area Cost")]
+    public int costIncrement = 1;
+    public int radius = 1; // square
+    public List<Vector2Int> costFootPrint;
+
     private void OnValidate()
     {
         if (type == BuildingShapeType.Rectangular && size != _lastSize)
@@ -31,6 +36,10 @@ public class BuildingData : ScriptableObject
             _lastSize = size;
             GenerateRectangularFootprint();
         }
+
+        if (footprint == null || costIncrement == 0 || radius == 0)
+            return;
+        GenerateCostFootprint();
     }
 
     private void GenerateRectangularFootprint()
@@ -42,6 +51,61 @@ public class BuildingData : ScriptableObject
             for (int y = 0; y < size.y; y++)
             {
                 footprint.Add(new Vector2Int(x, y));
+            }
+        }
+    }
+
+    private void GenerateCostFootprint()
+    {
+        costFootPrint = new List<Vector2Int>();
+
+        if (footprint == null || footprint.Count == 0)
+            return;
+
+        HashSet<Vector2Int> footprintSet = new HashSet<Vector2Int>(footprint);
+        HashSet<Vector2Int> visited = new HashSet<Vector2Int>();
+
+        Queue<(Vector2Int pos, int dist)> queue = new Queue<(Vector2Int, int)>();
+
+        foreach (var cell in footprint)
+        {
+            queue.Enqueue((cell, 0));
+            visited.Add(cell);
+        }
+
+        Vector2Int[] directions = new Vector2Int[]
+        {
+            new Vector2Int(1, 0),
+            new Vector2Int(-1, 0),
+            new Vector2Int(0, 1),
+            new Vector2Int(0, -1),
+        };
+
+        while (queue.Count > 0)
+        {
+            var (pos, dist) = queue.Dequeue();
+
+            if (dist > radius)
+                continue;
+
+            // Don't include original footprint tiles
+            if (!footprintSet.Contains(pos))
+            {
+                costFootPrint.Add(pos);
+            }
+
+            if (dist == radius)
+                continue;
+
+            foreach (var dir in directions)
+            {
+                Vector2Int next = pos + dir;
+
+                if (visited.Contains(next))
+                    continue;
+
+                visited.Add(next);
+                queue.Enqueue((next, dist + 1));
             }
         }
     }

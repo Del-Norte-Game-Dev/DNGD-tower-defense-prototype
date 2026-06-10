@@ -67,12 +67,25 @@ public class FlowField
 
             foreach (Vector2Int direction in Grid<FlowFieldCell>.DIR8_ManhattanBias)
             {
-                if (!flowGrid.TryGetGridObject(cur.x + direction.x, cur.y + direction.y, out FlowFieldCell neighbor))
+                int nx = cur.x + direction.x;
+                int ny = cur.y + direction.y;
+
+                if (!flowGrid.TryGetGridObject(nx, ny, out FlowFieldCell neighbor))
                     continue;
 
-                MapCell mapCell = costGrid.GetGridObject(neighbor.x, neighbor.y);
+                MapCell mapCell = costGrid.GetGridObject(nx, ny);
                 if (!mapCell.IsWalkable())
                     continue;
+
+                // Prevent diagonal corner cutting
+                if (direction.x != 0 && direction.y != 0)
+                {
+                    MapCell side1 = costGrid.GetGridObject(cur.x + direction.x, cur.y);
+                    MapCell side2 = costGrid.GetGridObject(cur.x, cur.y + direction.y);
+
+                    if (!side1.IsWalkable() || !side2.IsWalkable())
+                        continue;
+                }
 
                 int newCost = cur.integrationCost + mapCell.cost;
                 if (newCost < neighbor.integrationCost)
@@ -102,8 +115,21 @@ public class FlowField
 
                 foreach (Vector2Int direction in Grid<FlowFieldCell>.DIR8_ManhattanBias)
                 {
-                    if (!flowGrid.TryGetGridObject(x + direction.x, y + direction.y, out FlowFieldCell neighbor))
+                    int nx = x + direction.x;
+                    int ny = y + direction.y;
+
+                    if (!flowGrid.TryGetGridObject(nx, ny, out FlowFieldCell neighbor))
                         continue;
+
+                    // Prevent diagonal corner cutting
+                    if (direction.x != 0 && direction.y != 0)
+                    {
+                        MapCell side1 = costGrid.GetGridObject(x + direction.x, y);
+                        MapCell side2 = costGrid.GetGridObject(x, y + direction.y);
+
+                        if (!side1.IsWalkable() || !side2.IsWalkable())
+                            continue;
+                    }
 
                     if (neighbor.integrationCost < bestCost)
                     {
