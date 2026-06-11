@@ -13,7 +13,23 @@ MonoBehaviour:
   m_Name: testTower
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   type: 0
+  cost: []
   prefab: {fileID: 8797516249818397164, guid: 32a38e68ebc2ccb488390268feb154af, type: 3}
   size: {x: 1, y: 1}
   footprint:
   - {x: 0, y: 0}
+  costIncrement: 2
+  radius: 2
+  costFootprint:
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: -1}
+  - {x: 2, y: 0}
+  - {x: 1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -2, y: 0}
+  - {x: -1, y: 1}
+  - {x: -1, y: -1}
+  - {x: 0, y: 2}
+  - {x: 0, y: -2}

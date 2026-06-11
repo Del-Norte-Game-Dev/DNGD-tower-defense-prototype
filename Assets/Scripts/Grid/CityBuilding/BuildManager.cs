@@ -123,7 +123,7 @@ public class BuildManager : GenericSingleton<BuildManager>
     }
 
     //checks surronding buildings in a radius and returns a dictionary of their relative positions and transforms
-    public Dictionary<Vector2Int, PlacedBuilding> GetSurroundingBuildings(Vector3 worldPos, int radius = 1)
+    public Dictionary<Vector2Int, PlacedBuilding> GetSurroundingBuildingsAtPreview(int radius = 1)
     {
 
         surroundingCache.Clear();
@@ -157,9 +157,53 @@ public class BuildManager : GenericSingleton<BuildManager>
                         if (neighborCell.placedBuilding != null)
                             surroundingCache[new Vector2Int(checkX - cellPos.x, checkY - cellPos.y)] = neighborCell.placedBuilding;
                     }
-                                        checkedOffsets.Add(checkPos);
+                    checkedOffsets.Add(checkPos);
                     
                 }
+            }
+        }
+
+        return surroundingCache;
+    }
+
+    public Dictionary<Vector2Int, PlacedBuilding> GetSurroundingBuildingsAt(Vector3 worldPos, int radius = 1)
+    {
+        surroundingCache.Clear();
+
+        buildMap.BuildGrid.GetXY(worldPos, out int xPos, out int yPos);
+        Vector2Int cellPos = new Vector2Int(xPos, yPos);
+
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                if (x == 0 && y == 0) continue;
+
+                int checkX = cellPos.x + x;
+                int checkY = cellPos.y + y;
+
+                if (buildMap.BuildGrid.TryGetGridObject(checkX, checkY, out BuildCell neighborCell))
+                {
+                    if (neighborCell.placedBuilding != null)
+                        surroundingCache[new Vector2Int(x, y)] = neighborCell.placedBuilding;
+                }
+            }
+        }
+
+        //add preview building if it's within the radius and not already included
+        if (previewController != null)
+        {
+            buildMap.BuildGrid.GetXY(previewController.CenterPosition, out int previewX, out int previewY);
+            int dx = previewX - cellPos.x;
+            int dy = previewY - cellPos.y;
+
+            if (dx == 0 && dy == 0) { }  // same cell, skip
+            else if (Mathf.Abs(dx) <= radius && Mathf.Abs(dy) <= radius)
+            {
+                // Only add if there isn't already a placed building at that offset
+                var previewOffset = new Vector2Int(dx, dy);
+                if (!surroundingCache.ContainsKey(previewOffset))
+                    surroundingCache[previewOffset] = null;
             }
         }
 

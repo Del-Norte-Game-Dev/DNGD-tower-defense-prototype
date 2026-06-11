@@ -13,7 +13,8 @@ public class ResourceGatherBuilding : BuildingBehavior
 
     public override bool CanPlace(Vector3 worldPos)
     {
-        Dictionary<Vector2Int, PlacedBuilding> neighbors = BuildManager.Instance.GetSurroundingBuildings(worldPos);
+        Dictionary<Vector2Int, PlacedBuilding> neighbors = BuildManager.Instance.GetSurroundingBuildingsAtPreview();
+
 
         foreach (PlacedBuilding neighbor in neighbors.Values)
         {

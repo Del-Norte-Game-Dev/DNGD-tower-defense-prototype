@@ -16,4 +16,4 @@ MonoBehaviour:
   dotSprite: {fileID: 1438954000357410018, guid: 23452656112914b4092b2ec969219bfe, type: 3}
   minCostColor: {r: 0.374466, g: 0.8018868, b: 0.47115576, a: 1}
   maxCostColor: {r: 1, g: 0.23113209, b: 0.23113209, a: 1}
-  impassibleColor: {r: 0, g: 0, b: 0, a: 1}
+  impassibleColor: {r: 0.31132078, g: 0.31132078, b: 0.31132078, a: 1}

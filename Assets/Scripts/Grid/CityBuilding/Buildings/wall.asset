@@ -10,14 +10,20 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
-  m_Name: testTreeData
+  m_Name: wall
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   type: 0
-  cost: []
-  prefab: {fileID: 1266148946770989328, guid: 58322d797f0734aa085f165188acf77e, type: 3}
+  cost:
+  - type: 0
+    amount: 0
+  prefab: {fileID: 5222877825863610663, guid: 47b6f0b89f94ade4a9ded4ce51c5f3e8, type: 3}
   size: {x: 1, y: 1}
   footprint:
   - {x: 0, y: 0}
-  costIncrement: 0
-  radius: 0
-  costFootprint: []
+  costIncrement: 1
+  radius: 1
+  costFootprint:
+  - {x: 1, y: 0}
+  - {x: -1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: -1}
