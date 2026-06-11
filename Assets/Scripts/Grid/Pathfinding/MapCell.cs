@@ -2,52 +2,47 @@ public class MapCell
 {
     public int x { get; private set; }
     public int y { get; private set; }
-    public byte cost; // cost to walk over this cell
-    public byte baseCost; // stores the cost before building placement
-    // other map cell data ex. tile type
+    public byte cost { get; private set;} // cost to walk over this cell
+    public bool isWalkable { get; private set; } // explicit walkability state
     
-    public MapCell(int x, int y, byte cost = 1)
+    public MapCell(int x, int y, byte cost = 1, bool isWalkable = true)
     {
         this.x = x;
         this.y = y;
-        baseCost = cost;
+        this.isWalkable = isWalkable;
         SetCost(cost);
     }
 
-    public void IncreaseBaseCost(byte amount)
+    public void SetWalkable(bool value)
     {
-        if (baseCost == byte.MaxValue) return;
-        if (baseCost + amount > byte.MaxValue) {
-            baseCost = byte.MaxValue;
-        }
-        else
-        {
-            baseCost += amount;
-        }
+        isWalkable = value;
     }
 
-    public void SetBaseCost(byte amount)
+    public bool SetCost(byte amount)
     {
-        if (baseCost == amount) return;
-        if (amount > byte.MaxValue) baseCost = byte.MaxValue;
-        baseCost = amount;
-    }
-
-    public void SetCost(byte amount)
-    {
-        if (cost == amount) return;
-        if (amount > byte.MaxValue) cost = byte.MaxValue;
+        if (cost == amount) return true;
+        if (amount >= byte.MaxValue){ // overflow detection
+            cost = byte.MaxValue;
+            return false;
+        }
         cost = amount;
+        return true;
     }
 
-    public void ResetToOriginalCost()
+    public bool IncreaseCost(byte amount)
     {
-        SetCost(baseCost);
+        if (amount == 0) return true;
+        if (cost >= byte.MaxValue - amount){ // overflow detection
+            cost = byte.MaxValue;
+            return false;
+        }
+        cost += amount;
+        return true;
     }
 
     public bool IsWalkable()
     {
-        return cost < byte.MaxValue;
+        return isWalkable;
     }
 
     public override string ToString()

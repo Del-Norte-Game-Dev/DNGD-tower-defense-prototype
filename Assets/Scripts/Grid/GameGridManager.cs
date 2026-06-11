@@ -72,7 +72,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
 
         foreach (Vector2Int cell in cells)
         {
-            mapProvider.SetBlocked(cell.x, cell.y);
+            mapProvider.SetWalkable(cell.x, cell.y, false);
         }
     }
 
@@ -83,7 +83,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
 
         foreach (Vector2Int cell in cells)
         {
-            mapProvider.RestoreOriginalCost(cell.x, cell.y);
+            mapProvider.SetWalkable(cell.x, cell.y, true);
         }
     }
 }

@@ -51,10 +51,20 @@ public class FlowField
         }
     }
 
+    private bool TryAddCosts(int currentCost, int tileCost, out int result)
+    {
+        if (currentCost == int.MaxValue || currentCost > int.MaxValue - tileCost){
+            result = int.MaxValue;
+            return false;
+        }
+
+        result = currentCost + tileCost;
+        return true;
+    }
+
     private void GenerateIntegrationField(FlowFieldCell dest)
     {
         ResetGrid();
-
         destination = dest;
         destination.integrationCost = 0;
 
@@ -73,7 +83,7 @@ public class FlowField
                 if (!flowGrid.TryGetGridObject(nx, ny, out FlowFieldCell neighbor))
                     continue;
 
-                MapCell mapCell = costGrid.GetGridObject(nx, ny);
+                MapCell mapCell = costGrid.GetGridObject(nx, ny); // TODO: expose this to interface
                 if (!mapCell.IsWalkable())
                     continue;
 
@@ -87,7 +97,11 @@ public class FlowField
                         continue;
                 }
 
-                int newCost = cur.integrationCost + mapCell.cost;
+                if (!TryAddCosts(cur.integrationCost, mapCell.cost, out int newCost)){
+                    Debug.LogWarning("Integration cost overflowed");
+                    continue;
+                }
+
                 if (newCost < neighbor.integrationCost)
                 {
                     neighbor.integrationCost = newCost;
@@ -104,11 +118,6 @@ public class FlowField
             for (int y = 0; y < flowGrid.GetHeight(); y++)
             {
                 var cell = flowGrid.GetGridObject(x, y);
-                if (cell.integrationCost == int.MaxValue)
-                {
-                    cell.flowDirection = Vector2.zero;
-                    continue;
-                }
 
                 FlowFieldCell best = null;
                 int bestCost = cell.integrationCost;
@@ -130,6 +139,10 @@ public class FlowField
                         if (!side1.IsWalkable() || !side2.IsWalkable())
                             continue;
                     }
+
+                    MapCell mapCell = costGrid.GetGridObject(nx, ny); // TODO: expose this to interface
+                    if (!mapCell.IsWalkable())
+                        continue;
 
                     if (neighbor.integrationCost < bestCost)
                     {
