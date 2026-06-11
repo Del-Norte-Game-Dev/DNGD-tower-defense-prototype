@@ -49,7 +49,7 @@ public class MapProvider : GenericSingleton<MapProvider>
                 float t = cell.cost / 5f;
                 return Color.Lerp(config.minCostColor, config.maxCostColor, Mathf.Clamp01(t));
             });
-
+        // debugDrawer.SetText(true);
         isInitialized = true;
     }
 
@@ -106,12 +106,30 @@ public class MapProvider : GenericSingleton<MapProvider>
     }
     # endregion
 
-    public void SetCost(int x, int y, byte cost)
+    public bool SetCost(int x, int y, byte cost)
     {
-        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return;
-        cell.SetCost(cost);
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return false;
         grid.TriggerDebugRefresh(x, y);
         CostGridChanged?.Invoke();
+        return cell.SetCost(cost);
+    }
+
+    public bool IncreaseCost(int x, int y, byte cost)
+    {
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return false;
+        bool r =cell.IncreaseCost(cost);
+        grid.TriggerDebugRefresh(x, y);
+        CostGridChanged?.Invoke();
+        return r;
+    }
+
+    public bool DecreaseCost(int x, int y, byte cost)
+    {
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return false;
+        bool r = cell.DecreaseCost(cost);
+        grid.TriggerDebugRefresh(x, y);
+        CostGridChanged?.Invoke();
+        return r;
     }
 
     public void SetWalkable(int x, int y, bool isWalkable)

@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 public class MapCell
 {
     public int x { get; private set; }
@@ -39,6 +41,18 @@ public class MapCell
         cost += amount;
         return true;
     }
+
+    public bool DecreaseCost(byte amount)
+    {
+        if (amount == 0) return true;
+        if (cost <= amount){ // overflow detection
+            cost = 1;
+            return false;
+        }
+        cost -= amount;;
+        return true;
+    }
+
 
     public bool IsWalkable()
     {
