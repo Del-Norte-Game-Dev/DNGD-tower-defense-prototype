@@ -189,7 +189,8 @@ public class BuildManager : GenericSingleton<BuildManager>
                 }
             }
         }
-        
+
+        //add preview building if it's within the radius and not already included
         if (previewController != null)
         {
             buildMap.BuildGrid.GetXY(previewController.CenterPosition, out int previewX, out int previewY);

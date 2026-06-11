@@ -39,7 +39,7 @@ public class DefenseTower : BuildingBehavior
         healthComponent = GetComponent<HealthComponent>();
         healthComponent.OnDead += OnDead;
 
-        InvokeRepeating(nameof(Retarget), 0f, retargetInterval); // runs periodically to update target based on proximity to base
+        InvokeRepeating(nameof(Retarget), Random.Range(0f, retargetInterval), retargetInterval); // runs periodically to update target based on proximity to base
     }
 
     private void OnDead()

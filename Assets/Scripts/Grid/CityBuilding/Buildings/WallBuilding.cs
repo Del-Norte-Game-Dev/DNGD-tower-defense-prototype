@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor.TerrainTools;
 using UnityEditor.Tilemaps;
 using UnityEngine;
@@ -16,9 +17,19 @@ public class WallBuilding : BuildingBehavior
     [SerializeField] private GameObject wall3WayModel;
     [SerializeField] private GameObject wall4WayModel;
 
+    private HealthComponent healthComponent;
+
     public override void Init()
     {
         isPlaced = true;
+
+        healthComponent = GetComponent<HealthComponent>();
+        healthComponent.OnDead += OnDead;
+    }
+
+    private void OnDead()
+    {
+        BuildManager.Instance.RemoveBuilding(transform.position);
     }
 
     // Update is called once per frame
@@ -37,7 +48,6 @@ public class WallBuilding : BuildingBehavior
         GetCorrectModelAt(BuildManager.Instance.GetSurroundingBuildingsAtPreview());
     }
 
-    // Now uses GetSurroundingBuildingsAt which already injects preview
     public void GetCorrectModelFromWorldPos()
     {
         GetCorrectModelAt(BuildManager.Instance.GetSurroundingBuildingsAt(transform.position));
@@ -55,7 +65,6 @@ public class WallBuilding : BuildingBehavior
                 old.Transform.GetComponent<WallBuilding>()?.GetCorrectModelFromWorldPos();
         }
 
-        // Update current neighbors — GetSurroundingBuildingsAt handles preview injection
         foreach (var neighbor in neighbors)
         {
             if (neighbor != null)
@@ -84,6 +93,8 @@ public class WallBuilding : BuildingBehavior
         bool south = HasWallAt(surrounding, new Vector2Int(0, -1));
         bool west = HasWallAt(surrounding, new Vector2Int(-1, 0));
 
+
+        //uses NESW order so that the bitmask can be read as a binary number
         int mask = (north ? 1 : 0) | (east ? 2 : 0) | (south ? 4 : 0) | (west ? 8 : 0);
 
         wallPostModel.SetActive(false);

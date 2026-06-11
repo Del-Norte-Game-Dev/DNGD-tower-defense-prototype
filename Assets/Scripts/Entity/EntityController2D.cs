@@ -32,7 +32,7 @@ public class EntityController2D : MonoBehaviour
         buildingContactFilter.SetLayerMask(buildingLayer);
         buildingContactFilter.useTriggers = true;
 
-        retargetTimer = retargetInterval;
+        retargetTimer = UnityEngine.Random.Range(0f, retargetInterval);
 
         health = GetComponent<HealthComponent>();
         health.OnDead += OnDead;
