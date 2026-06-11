@@ -13,7 +13,11 @@ MonoBehaviour:
   m_Name: testTreeData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   type: 0
+  cost: []
   prefab: {fileID: 1266148946770989328, guid: 58322d797f0734aa085f165188acf77e, type: 3}
   size: {x: 1, y: 1}
   footprint:
   - {x: 0, y: 0}
+  costIncrement: 0
+  radius: 0
+  costFootprint: []

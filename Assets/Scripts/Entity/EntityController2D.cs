@@ -5,7 +5,7 @@ public class EntityController2D : MonoBehaviour
 {
     public static int ENTITY_COUNT;
 
-    private EntityMovement2D movement;
+    private EntityRbMovement2D movement;
 
     [SerializeField] private float maxHealth = 5;
     private HealthComponent health;
@@ -26,7 +26,7 @@ public class EntityController2D : MonoBehaviour
 
     private void Awake()
     {
-        movement = GetComponent<EntityMovement2D>();
+        movement = GetComponent<EntityRbMovement2D>();
 
         buildingContactFilter = new ContactFilter2D();
         buildingContactFilter.SetLayerMask(buildingLayer);

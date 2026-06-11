@@ -5,7 +5,7 @@ public class FlowFieldFollower : MonoBehaviour
     [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float directionRefreshInterval = 0.12f;
 
-    private EntityMovement2D movement;
+    private EntityRbMovement2D movement;
     private EntityController2D controller;
     private FlowField flowField;
 
@@ -15,7 +15,7 @@ public class FlowFieldFollower : MonoBehaviour
 
     private void Awake()
     {
-        movement = GetComponent<EntityMovement2D>();
+        movement = GetComponent<EntityRbMovement2D>();
         controller = GetComponent<EntityController2D>();
     }
 
