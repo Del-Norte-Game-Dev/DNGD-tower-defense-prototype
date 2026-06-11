@@ -29,6 +29,7 @@ public class WallBuilding : BuildingBehavior
 
     private void OnDead()
     {
+        OrientNeighborsFromWorldPos();
         BuildManager.Instance.RemoveBuilding(transform.position);
     }
 
@@ -61,13 +62,13 @@ public class WallBuilding : BuildingBehavior
         // Reset neighbors no longer adjacent
         foreach (var old in lastOrientedNeighbors)
         {
-            if (old != null && !neighbors.Contains(old))
+            if (old != null && old.Transform != null && !neighbors.Contains(old))
                 old.Transform.GetComponent<WallBuilding>()?.GetCorrectModelFromWorldPos();
         }
 
         foreach (var neighbor in neighbors)
         {
-            if (neighbor != null)
+            if (neighbor != null && neighbor.Transform != null)
                 neighbor.Transform.GetComponent<WallBuilding>()?.GetCorrectModelFromWorldPos();
         }
 
@@ -81,7 +82,7 @@ public class WallBuilding : BuildingBehavior
 
         foreach (var neighbor in neighbors)
         {
-            if (neighbor != null)
+            if (neighbor != null && neighbor.Transform != null)
                 neighbor.Transform.GetComponent<WallBuilding>()?.GetCorrectModelFromWorldPos();
         }
     }
@@ -140,6 +141,7 @@ public class WallBuilding : BuildingBehavior
     {
         if (!surrounding.TryGetValue(offset, out PlacedBuilding neighbor)) return false;
         if (neighbor == null) return true; // null = injected preview wall
+        if (neighbor.Transform == null) return false;
 
         return neighbor.Transform.GetComponent<WallBuilding>() != null;
     }
