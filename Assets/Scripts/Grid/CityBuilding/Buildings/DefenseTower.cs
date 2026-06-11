@@ -2,7 +2,7 @@ using UnityEngine;
 using static BuildingData;
 
 [RequireComponent(typeof(HealthComponent))]
-public class DefenseTower : MonoBehaviour, IBuilding
+public class DefenseTower : BuildingBehavior
 {
     [Header("Tower Stats")]
     [SerializeField] private float range = 5f;
@@ -25,7 +25,7 @@ public class DefenseTower : MonoBehaviour, IBuilding
     private HealthComponent healthComponent;
 
 
-    public void Init()
+    public override void Init()
     {
         enemyManager = EnemyWaveManager.Instance;
 

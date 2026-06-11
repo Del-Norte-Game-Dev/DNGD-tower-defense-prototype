@@ -13,6 +13,9 @@ MonoBehaviour:
   m_Name: testSawData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   type: 0
+  cost:
+  - type: 0
+    amount: 3
   prefab: {fileID: 842762302933028677, guid: 323500fe1609c425194f84530fccf162, type: 3}
   size: {x: 2, y: 1}
   footprint:

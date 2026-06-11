@@ -65,25 +65,33 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         buildManager.BuildingRemoved += HandleBuildingRemoved;
     }
 
-    private void HandleBuildingPlaced(List<Vector2Int> cells)
+    private void HandleBuildingPlaced(PlacedBuilding placed)
     {
-        if (mapProvider == null)
+        if (mapProvider == null || placed == null)
             return;
 
-        foreach (Vector2Int cell in cells)
+        foreach (Vector2Int cell in placed.OccupiedPositions)
         {
-            mapProvider.SetBlocked(cell.x, cell.y);
+            mapProvider.IncreaseCost(cell.x, cell.y, 100);
+        }
+
+        foreach (Vector2Int cell in placed.OccupiedCostPositions){
+            mapProvider.IncreaseCost(cell.x, cell.y, (byte)placed.Data.costIncrement);
         }
     }
 
-    private void HandleBuildingRemoved(List<Vector2Int> cells)
+    private void HandleBuildingRemoved(PlacedBuilding placed)
     {
-        if (mapProvider == null)
+        if (mapProvider == null || placed == null)
             return;
 
-        foreach (Vector2Int cell in cells)
+        foreach (Vector2Int cell in placed.OccupiedPositions)
         {
-            mapProvider.RestoreOriginalCost(cell.x, cell.y);
+            mapProvider.DecreaseCost(cell.x, cell.y, 100);
+        }
+
+        foreach (Vector2Int cell in placed.OccupiedCostPositions){
+            mapProvider.DecreaseCost(cell.x, cell.y, (byte)placed.Data.costIncrement);
         }
     }
 }

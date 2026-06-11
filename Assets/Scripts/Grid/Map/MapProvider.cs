@@ -32,7 +32,7 @@ public class MapProvider : GenericSingleton<MapProvider>
             origin,
             (g, x, y) => new MapCell(x, y)
         );
-        InitializeNoiseCosts();
+        InitializePlainCosts();
 
         config = GlobalAssets.FlowFieldVisual;
         debugDrawer = new GameObject("MapDebugDrawer").AddComponent<GridDebugDrawer>();
@@ -43,13 +43,13 @@ public class MapProvider : GenericSingleton<MapProvider>
             (x, y) =>
             {
                 grid.TryGetGridObject(x, y, out MapCell cell);
-                if (cell.cost == byte.MaxValue)
+                if (cell == null || !cell.IsWalkable())
                     return config.impassibleColor;
 
                 float t = cell.cost / 5f;
                 return Color.Lerp(config.minCostColor, config.maxCostColor, Mathf.Clamp01(t));
             });
-
+        // debugDrawer.SetText(true);
         isInitialized = true;
     }
 
@@ -74,7 +74,6 @@ public class MapProvider : GenericSingleton<MapProvider>
         {
             for (int y = 0; y < grid.GetHeight(); y++)
             {
-                grid.GetGridObject(x, y).SetBaseCost(1);
                 grid.GetGridObject(x, y).SetCost(1);
             }
         }
@@ -101,30 +100,42 @@ public class MapProvider : GenericSingleton<MapProvider>
                 if (cell == null) continue;
 
                 byte cost = noise > obstacleThreshold ? byte.MaxValue : (byte)(1 + Mathf.FloorToInt(noise * 5));
-                cell.SetBaseCost(cost);
                 cell.SetCost(cost);
             }
         }
     }
     # endregion
 
-    public void SetCost(int x, int y, byte cost)
+    public bool SetCost(int x, int y, byte cost)
     {
-        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return;
-        cell.SetCost(cost);
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return false;
         grid.TriggerDebugRefresh(x, y);
         CostGridChanged?.Invoke();
+        return cell.SetCost(cost);
     }
 
-    public void SetBlocked(int x, int y)
+    public bool IncreaseCost(int x, int y, byte cost)
     {
-        SetCost(x, y, byte.MaxValue);
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return false;
+        bool r =cell.IncreaseCost(cost);
+        grid.TriggerDebugRefresh(x, y);
+        CostGridChanged?.Invoke();
+        return r;
     }
 
-    public void RestoreOriginalCost(int x, int y)
+    public bool DecreaseCost(int x, int y, byte cost)
+    {
+        if(!grid.TryGetGridObject(x, y, out MapCell cell)) return false;
+        bool r = cell.DecreaseCost(cost);
+        grid.TriggerDebugRefresh(x, y);
+        CostGridChanged?.Invoke();
+        return r;
+    }
+
+    public void SetWalkable(int x, int y, bool isWalkable)
     {
         if(!grid.TryGetGridObject(x, y, out MapCell cell)) return;
-        cell.ResetToOriginalCost();
+        cell.SetWalkable(isWalkable);
         grid.TriggerDebugRefresh(x, y);
         CostGridChanged?.Invoke();
     }
