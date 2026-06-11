@@ -55,7 +55,7 @@ public class BuildMap
 
     private bool TryGetPlacementCells(Vector3 worldPos, BuildingData data, BuildingData.Dir dir, out Vector2Int origin, out List<BuildCell> validCells)
     {
-        origin = ComputeOriginGridPosition(worldPos, data, dir);
+        origin = GetPlacementOrigin(worldPos, data, dir);
         validCells = new List<BuildCell>(data.footprint?.Count ?? 0);
 
         foreach (Vector2Int offset in GetRotatedFootprint(data.footprint, dir))
@@ -75,7 +75,7 @@ public class BuildMap
         return true;
     }
 
-    private Vector2Int ComputeOriginGridPosition(Vector3 worldPos, BuildingData data, BuildingData.Dir dir)
+    public Vector2Int GetPlacementOrigin(Vector3 worldPos, BuildingData data, BuildingData.Dir dir)
     {
         Vector2 centerOffset = data.GetCenterOffset();
         Vector2 originWorldPosition = (Vector2)worldPos - BuildingData.GetRotatedVector(dir, centerOffset.x, centerOffset.y);
@@ -108,7 +108,7 @@ public class BuildMap
 
     public Vector3 GetSnappedPlacementCorner(Vector3 worldPos, BuildingData data, BuildingData.Dir dir)
     {
-        Vector2Int origin = ComputeOriginGridPosition(worldPos, data, dir);
+        Vector2Int origin = GetPlacementOrigin(worldPos, data, dir);
         return GetPlacementWorldCorner(dir, origin);
     }
 

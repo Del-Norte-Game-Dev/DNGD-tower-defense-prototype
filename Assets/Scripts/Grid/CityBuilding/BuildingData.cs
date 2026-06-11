@@ -27,7 +27,7 @@ public class BuildingData : ScriptableObject
     [Header("Area Cost")]
     public int costIncrement = 1;
     public int radius = 1; // square
-    public List<Vector2Int> costFootPrint;
+    public List<Vector2Int> costFootprint;
 
     private void OnValidate()
     {
@@ -37,7 +37,7 @@ public class BuildingData : ScriptableObject
             GenerateRectangularFootprint();
         }
 
-        if (footprint == null || costIncrement == 0 || radius == 0)
+        if ((footprint == null || costIncrement == 0 || radius == 0) && costFootprint == null)
             return;
         GenerateCostFootprint();
     }
@@ -57,7 +57,7 @@ public class BuildingData : ScriptableObject
 
     private void GenerateCostFootprint()
     {
-        costFootPrint = new List<Vector2Int>();
+        costFootprint = new List<Vector2Int>();
 
         if (footprint == null || footprint.Count == 0)
             return;
@@ -91,7 +91,7 @@ public class BuildingData : ScriptableObject
             // Don't include original footprint tiles
             if (!footprintSet.Contains(pos))
             {
-                costFootPrint.Add(pos);
+                costFootprint.Add(pos);
             }
 
             if (dist == radius)

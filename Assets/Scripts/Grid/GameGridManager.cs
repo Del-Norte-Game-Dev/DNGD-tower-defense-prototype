@@ -74,6 +74,10 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         {
             mapProvider.IncreaseCost(cell.x, cell.y, 100);
         }
+
+        foreach (Vector2Int cell in placed.OccupiedCostPositions){
+            mapProvider.IncreaseCost(cell.x, cell.y, (byte)placed.Data.costIncrement);
+        }
     }
 
     private void HandleBuildingRemoved(PlacedBuilding placed)
@@ -84,6 +88,10 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         foreach (Vector2Int cell in placed.OccupiedPositions)
         {
             mapProvider.DecreaseCost(cell.x, cell.y, 100);
+        }
+
+        foreach (Vector2Int cell in placed.OccupiedCostPositions){
+            mapProvider.DecreaseCost(cell.x, cell.y, (byte)placed.Data.costIncrement);
         }
     }
 }
