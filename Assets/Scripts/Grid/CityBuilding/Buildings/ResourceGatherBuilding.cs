@@ -18,7 +18,8 @@ public class ResourceGatherBuilding : BuildingBehavior
 
         foreach (PlacedBuilding neighbor in neighbors.Values)
         {
-            if(neighbor.Transform.TryGetComponent<ResourceBuilding>(out ResourceBuilding resource)){
+            if (neighbor != null && neighbor.Transform.TryGetComponent<ResourceBuilding>(out ResourceBuilding resource))
+            {
                 resourceType = resource.CollectResource();
                 return true;
             }

@@ -56,7 +56,14 @@ public class BuildPreview
 
         Vector3 snappedPos = map.GetSnappedPlacementCorner(worldPos, data, dir);
 
-        if (map.TryGetPlacement(worldPos, data, dir, out Vector3 pfPos))
+        bool canPlace = map.TryGetPlacement(worldPos, data, dir, out Vector3 pfPos);
+
+        if (canPlace && data.prefab != null && data.prefab.TryGetComponent<IBuilding>(out IBuilding prefabBehavior))
+        {
+            canPlace = prefabBehavior.CanPlace(worldPos);
+        }
+
+        if (canPlace)
         {
             preview.transform.position = pfPos;
             preview.transform.rotation = Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir));
