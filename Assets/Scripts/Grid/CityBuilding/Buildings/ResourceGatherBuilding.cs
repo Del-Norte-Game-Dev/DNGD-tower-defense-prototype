@@ -1,23 +1,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ResourceGatherBuilding : MonoBehaviour, IBuilding
+public class ResourceGatherBuilding : BuildingBehavior
 {
     private ResourceType resourceType;
     [SerializeField] private float maxHealth = 10f;
 
-    public void Init()
+    public override void Init()
     {
         EnemyWaveManager.OnWaveCleared += CollectResources;
     }
 
-    public bool CanPlace(Vector3 worldPos)
+    public override bool CanPlace(Vector3 worldPos)
     {
-        Dictionary<Vector2Int, Transform> neighbors = BuildManager.Instance.GetSurroundingBuildings(worldPos);
+        Dictionary<Vector2Int, PlacedBuilding> neighbors = BuildManager.Instance.GetSurroundingBuildings(worldPos);
 
-        foreach (Transform neighbor in neighbors.Values)
+        foreach (PlacedBuilding neighbor in neighbors.Values)
         {
-            if(neighbor.TryGetComponent<ResourceBuilding>(out ResourceBuilding resource)){
+            if(neighbor.Transform.TryGetComponent<ResourceBuilding>(out ResourceBuilding resource)){
                 resourceType = resource.CollectResource();
                 return true;
             }

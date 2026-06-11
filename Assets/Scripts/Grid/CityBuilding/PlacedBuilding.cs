@@ -5,20 +5,28 @@ public class PlacedBuilding
 {
     public BuildingData Data { get; private set; }
     public Transform Transform { get; private set; }
-    public List<BuildCell> OccupiedCells { get; private set; }
+    public IReadOnlyList<Vector2Int> OccupiedPositions { get; private set; }
 
-    public PlacedBuilding(BuildingData data, Transform transform, List<BuildCell> cells)
+    private BuildMap map;
+
+    public PlacedBuilding(
+        BuildingData data, 
+        Transform transform, 
+        List<Vector2Int> positions,
+        BuildMap map)
     {
         Data = data;
         Transform = transform;
-        OccupiedCells = cells;
+        OccupiedPositions = positions.AsReadOnly();
+        this.map = map;
     }
 
     public void Remove()
     {
-        foreach (var cell in OccupiedCells)
+        if (map != null)
         {
-            cell.ClearBuilding();
+            List<Vector2Int> removed = new List<Vector2Int>();
+            map.ClearBuildingCells(this, removed);
         }
 
         Object.Destroy(Transform.gameObject);

@@ -6,9 +6,9 @@ public class BuildCell
     public int x;
     public int y;
 
-    public Transform placedBuilding;
+    public PlacedBuilding placedBuilding;
 
-    public BuildCell(Grid<BuildCell> grid, int x, int y, Transform placedBuilding = null)
+    public BuildCell(Grid<BuildCell> grid, int x, int y, PlacedBuilding placedBuilding = null)
     {
         this.grid = grid;
         this.x = x;
@@ -16,7 +16,7 @@ public class BuildCell
         this.placedBuilding = placedBuilding;
     }
 
-    public void SetBuilding(Transform building)
+    public void SetBuilding(PlacedBuilding building)
     {
         placedBuilding = building;
         grid.TriggerDebugRefresh(x, y);

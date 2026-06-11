@@ -32,7 +32,7 @@ public class MapProvider : GenericSingleton<MapProvider>
             origin,
             (g, x, y) => new MapCell(x, y)
         );
-        InitializeNoiseCosts();
+        InitializePlainCosts();
 
         config = GlobalAssets.FlowFieldVisual;
         debugDrawer = new GameObject("MapDebugDrawer").AddComponent<GridDebugDrawer>();

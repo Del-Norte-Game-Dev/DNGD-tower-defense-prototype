@@ -36,17 +36,21 @@ public class BuildMap
         return true;
     }
 
-    public bool PlaceBuilding(Transform buildingTransform, List<BuildCell> cells)
+    public bool PlaceBuilding(PlacedBuilding placedBuilding)
     {
-        if (buildingTransform == null || cells == null)
+        if (placedBuilding == null || placedBuilding.OccupiedPositions == null)
             return false;
 
-        foreach (BuildCell cell in cells)
+        int placedCount = 0;
+        foreach (Vector2Int pos in placedBuilding.OccupiedPositions)
         {
-            cell.SetBuilding(buildingTransform);
+            BuildCell cell = buildGrid.GetGridObject(pos.x, pos.y);
+            if (cell == null) continue;
+            cell.SetBuilding(placedBuilding);
+            placedCount++;
         }
 
-        return cells.Count > 0;
+        return placedCount > 0;
     }
 
     private bool TryGetPlacementCells(Vector3 worldPos, BuildingData data, BuildingData.Dir dir, out Vector2Int origin, out List<BuildCell> validCells)
@@ -63,15 +67,6 @@ public class BuildMap
             {
                 validCells = null;
                 return false;
-            }
-
-            if(data.prefab.TryGetComponent<IBuilding>(out IBuilding building))
-            {
-                if (!building.CanPlace(worldPos))
-                {
-                    validCells = null;
-                    return false;
-                }
             }
 
             validCells.Add(cell);
@@ -117,32 +112,29 @@ public class BuildMap
         return GetPlacementWorldCorner(dir, origin);
     }
 
-    public bool TryRemoveBuildingAtWorldPosition(Vector3 worldPos, out Transform removedBuilding, out List<Vector2Int> removedCells)
+    public bool TryRemoveBuildingAtWorldPosition(Vector3 worldPos, out PlacedBuilding removedBuilding)
     {
         removedBuilding = null;
-        removedCells = null;
-
         if (!buildGrid.TryGetGridObject(worldPos, out BuildCell firstCell) || firstCell.placedBuilding == null)
             return false;
 
         removedBuilding = firstCell.placedBuilding;
-        removedCells = new List<Vector2Int>();
+        List<Vector2Int> removedCells = new List<Vector2Int>();
         ClearBuildingCells(removedBuilding, removedCells);
         return removedCells.Count > 0;
     }
-
-    private void ClearBuildingCells(Transform buildingTransform, List<Vector2Int> removedCells)
+    public void ClearBuildingCells(PlacedBuilding building, List<Vector2Int> removedCells)
     {
-        for (int x = 0; x < buildGrid.GetWidth(); x++)
+        if (building == null || building.OccupiedPositions == null)
+            return;
+
+        foreach (var pos in building.OccupiedPositions)
         {
-            for (int y = 0; y < buildGrid.GetHeight(); y++)
+            BuildCell cell = buildGrid.GetGridObject(pos.x, pos.y);
+            if (cell != null && cell.placedBuilding == building)
             {
-                BuildCell cell = buildGrid.GetGridObject(x, y);
-                if (cell != null && cell.placedBuilding == buildingTransform)
-                {
-                    cell.ClearBuilding();
-                    removedCells.Add(new Vector2Int(x, y));
-                }
+                cell.ClearBuilding();
+                removedCells.Add(pos);
             }
         }
     }
