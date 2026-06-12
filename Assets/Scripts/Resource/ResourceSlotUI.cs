@@ -20,9 +20,9 @@ public class ResourceSlotUI : MonoBehaviour
         if (res != null)
         {
             icon.sprite = res.icon;
-            icon.color = res.UIColor;
+            amountText.color = res.UIColor;
         }
-
+        
         ResourceManager.Instance.OnResourceChanged += OnResourceChanged;
 
         Refresh(ResourceManager.Instance.GetAmount(type));

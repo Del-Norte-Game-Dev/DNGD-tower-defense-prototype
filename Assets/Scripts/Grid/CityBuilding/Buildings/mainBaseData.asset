@@ -10,18 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
-  m_Name: testSawData
+  m_Name: mainBaseData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
-  id: sawmill
+  id: mainbase
   type: 0
-  cost:
-  - type: 0
-    amount: 3
-  prefab: {fileID: 842762302933028677, guid: 323500fe1609c425194f84530fccf162, type: 3}
-  size: {x: 2, y: 1}
+  isWalkable: 1
+  cost: []
+  prefab: {fileID: 6964326299114235550, guid: 7d5af64b9f34448118c4a6943b79a4a6, type: 3}
+  size: {x: 3, y: 3}
   footprint:
   - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
   - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 2, y: 0}
+  - {x: 2, y: 1}
+  - {x: 2, y: 2}
   costIncrement: 0
   radius: 0
   costFootprint: []
