@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ResourceDatabase
   resources:
   - {fileID: 11400000, guid: b3514022205874da8974c635746a2f73, type: 2}
+  - {fileID: 11400000, guid: 380fcf3ea3c8b4cfd85de66605d0596c, type: 2}
