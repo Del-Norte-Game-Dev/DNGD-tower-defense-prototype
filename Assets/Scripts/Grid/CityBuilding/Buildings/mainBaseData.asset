@@ -16,7 +16,7 @@ MonoBehaviour:
   type: 0
   isWalkable: 1
   cost: []
-  prefab: {fileID: 0}
+  prefab: {fileID: 6964326299114235550, guid: 7d5af64b9f34448118c4a6943b79a4a6, type: 3}
   size: {x: 3, y: 3}
   footprint:
   - {x: 0, y: 0}
