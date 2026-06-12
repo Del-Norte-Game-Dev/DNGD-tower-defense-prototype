@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
   m_Name: testSawData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  id: sawmill
   type: 0
   cost:
   - type: 0

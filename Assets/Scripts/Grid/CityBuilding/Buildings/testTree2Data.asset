@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
   m_Name: testTree2Data
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  id: bigtree
   type: 0
   cost: []
   prefab: {fileID: 1109238384984763648, guid: 326f4211b91da4197850f8f2ae33665f, type: 3}

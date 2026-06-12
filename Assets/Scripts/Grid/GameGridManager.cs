@@ -12,6 +12,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
 
     [Header("Dependencies")]
     [SerializeField] private BuildingRegistry buildingRegistry;
+    [SerializeField] private string worldSaveFileName = "world_save.json";
 
     private MapProvider mapProvider;
     private FlowFieldManager flowFieldManager;
@@ -29,6 +30,7 @@ public class GameGridManager : GenericSingleton<GameGridManager>
 
         InitializeManagers();
         SubscribeEvents();
+        LoadSavedBuildings();
     }
 
     private void OnDisable()
@@ -37,6 +39,19 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         {
             buildManager.BuildingPlaced -= HandleBuildingPlaced;
             buildManager.BuildingRemoved -= HandleBuildingRemoved;
+        }
+    }
+
+    private void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.F5))
+        {
+            SaveWorld();
+        }
+
+        if (Input.GetKeyDown(KeyCode.F6))
+        {
+            LoadSavedBuildings();
         }
     }
 
@@ -93,5 +108,53 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         foreach (Vector2Int cell in placed.OccupiedCostPositions){
             mapProvider.DecreaseCost(cell.x, cell.y, (byte)placed.Data.costIncrement);
         }
+    }
+
+    private void LoadSavedBuildings()
+    {
+        if (string.IsNullOrEmpty(worldSaveFileName))
+            return;
+
+        WorldSaveData saveData = DataLoader.LoadJson<WorldSaveData>(worldSaveFileName);
+        if (saveData == null || saveData.buildings == null || saveData.buildings.Count == 0)
+            return;
+
+        foreach (BuildingSaveData entry in saveData.buildings)
+        {
+            if (string.IsNullOrEmpty(entry.buildingID))
+                continue;
+
+            BuildingData data = buildingRegistry?.Get(entry.buildingID);
+            if (data == null)
+            {
+                Debug.LogWarning($"Saved building not found in registry: {entry.buildingID}");
+                continue;
+            }
+
+            BuildingData.Dir dir = BuildingData.GetDirFromRot(entry.rotation);
+            if (!buildManager.PlaceBuildingAtOrigin(data, dir, entry.origin))
+            {
+                Debug.LogWarning($"Failed to place saved building {entry.buildingID} at {entry.origin} rotation {entry.rotation}");
+            }
+        }
+    }
+
+    [ContextMenu("Save World")]
+    private void SaveWorld()
+    {
+        if (buildManager == null)
+        {
+            Debug.LogWarning("BuildManager is not initialized. Cannot save world.");
+            return;
+        }
+
+        WorldSaveData saveData = buildManager.ToWorldSaveData();
+        if (saveData == null)
+        {
+            Debug.LogWarning("Nothing to save.");
+            return;
+        }
+
+        DataLoader.SaveJson(worldSaveFileName, saveData);
     }
 }

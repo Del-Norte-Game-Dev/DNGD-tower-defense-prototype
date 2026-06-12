@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using static BuildingData;
 
@@ -19,7 +18,7 @@ public class BuildManager : GenericSingleton<BuildManager>
     public event System.Action<PlacedBuilding> BuildingRemoved;
 
     private Dictionary<Vector2Int, PlacedBuilding> surroundingCache = new Dictionary<Vector2Int, PlacedBuilding>();
-
+    private readonly List<PlacedBuilding> placedBuildings = new List<PlacedBuilding>();
 
     GridDebugDrawer debugDrawer;
 
@@ -32,6 +31,7 @@ public class BuildManager : GenericSingleton<BuildManager>
         currentData = registry != null && registry.Count > 0 ? registry.Get(0) : null;
         currentDataIndex = 0;
         buildMap = new BuildMap(width, height, cellSize, origin);
+        placedBuildings.Clear();
 
         if (currentData != null)
         {
@@ -99,14 +99,67 @@ public class BuildManager : GenericSingleton<BuildManager>
 
         if (PlacementService.TryPlace(buildMap, data, dir, worldPos, out PlacedBuilding placed))
         {
+            placedBuildings.Add(placed);
             BuildingPlaced?.Invoke(placed);
         }
+    }
+
+    public bool PlaceBuildingAtOrigin(BuildingData data, BuildingData.Dir dir, Vector2Int origin)
+    {
+        if (data == null || buildMap == null)
+            return false;
+
+        if (!TryBuildPositions(origin, data, dir, out List<Vector2Int> occupiedPositions))
+            return false;
+
+        Vector3 pfPos = buildMap.GetPlacementWorldCorner(dir, origin);
+        GameObject instance = Instantiate(data.prefab, pfPos, Quaternion.Euler(0, 0, BuildingData.GetRotFromDir(dir)));
+        if (instance.TryGetComponent<IBuilding>(out IBuilding runtimeBehavior))
+            runtimeBehavior.Init();
+
+        List<Vector2Int> costPositions = GetCostFootprintPositions(origin, data, dir);
+        PlacedBuilding placed = new PlacedBuilding(data, instance.transform, occupiedPositions, costPositions, buildMap, origin, dir);
+        if (!buildMap.PlaceBuilding(placed))
+        {
+            Destroy(instance);
+            return false;
+        }
+
+        placedBuildings.Add(placed);
+        BuildingPlaced?.Invoke(placed);
+        return true;
+    }
+
+    public WorldSaveData ToWorldSaveData()
+    {
+        WorldSaveData save = new WorldSaveData
+        {
+            buildings = new List<BuildingSaveData>()
+        };
+
+        foreach (PlacedBuilding placed in placedBuildings)
+        {
+            if (placed == null)
+                continue;
+
+            save.buildings.Add(new BuildingSaveData
+            {
+                buildingID = placed.Data.ID,
+                origin = placed.Origin,
+                rotation = (int)placed.Direction
+            });
+        }
+
+        return save;
     }
 
     public void RemoveBuilding(Vector3 worldPos)
     {
         if (buildMap.TryRemoveBuildingAtWorldPosition(worldPos, out PlacedBuilding removedBuilding))
         {
+            if (removedBuilding != null)
+                placedBuildings.Remove(removedBuilding);
+
             removedBuilding.Remove();
             BuildingRemoved?.Invoke(removedBuilding);
         }
@@ -120,6 +173,39 @@ public class BuildManager : GenericSingleton<BuildManager>
     private void OnDestroy()
     {
         previewController?.Destroy();
+    }
+
+    private bool TryBuildPositions(Vector2Int origin, BuildingData data, BuildingData.Dir dir, out List<Vector2Int> occupiedPositions)
+    {
+        occupiedPositions = new List<Vector2Int>();
+
+        foreach (Vector2Int offset in BuildMap.GetRotatedFootprint(data.footprint, dir))
+        {
+            Vector2Int position = new Vector2Int(origin.x + offset.x, origin.y + offset.y);
+            if (!buildMap.BuildGrid.TryGetGridObject(position.x, position.y, out BuildCell cell) || !cell.CanBuild())
+            {
+                occupiedPositions = null;
+                return false;
+            }
+
+            occupiedPositions.Add(position);
+        }
+
+        return true;
+    }
+
+    private List<Vector2Int> GetCostFootprintPositions(Vector2Int origin, BuildingData data, BuildingData.Dir dir)
+    {
+        List<Vector2Int> costPositions = new List<Vector2Int>();
+        if (data.costFootprint == null || data.costFootprint.Count == 0)
+            return costPositions;
+
+        foreach (Vector2Int offset in BuildMap.GetRotatedFootprint(data.costFootprint, dir))
+        {
+            costPositions.Add(new Vector2Int(origin.x + offset.x, origin.y + offset.y));
+        }
+
+        return costPositions;
     }
 
     //checks surronding buildings in a radius and returns a dictionary of their relative positions and transforms

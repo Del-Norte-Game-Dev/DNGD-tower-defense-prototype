@@ -7,6 +7,8 @@ public class PlacedBuilding
     public Transform Transform { get; private set; }
     public IReadOnlyList<Vector2Int> OccupiedPositions { get; private set; }
     public IReadOnlyList<Vector2Int> OccupiedCostPositions { get; private set; }
+    public Vector2Int Origin { get; private set; }
+    public BuildingData.Dir Direction { get; private set; }
 
     private BuildMap map;
 
@@ -15,12 +17,16 @@ public class PlacedBuilding
         Transform transform, 
         List<Vector2Int> positions,
         List<Vector2Int> costPositions,
-        BuildMap map)
+        BuildMap map,
+        Vector2Int origin,
+        BuildingData.Dir direction)
     {
         Data = data;
         Transform = transform;
         OccupiedPositions = positions.AsReadOnly();
         OccupiedCostPositions = costPositions.AsReadOnly();
+        Origin = origin;
+        Direction = direction;
         this.map = map;
     }
 

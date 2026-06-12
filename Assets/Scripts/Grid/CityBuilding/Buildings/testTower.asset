@@ -12,6 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
   m_Name: testTower
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
+  id: woodtower
   type: 0
   cost: []
   prefab: {fileID: 8797516249818397164, guid: 32a38e68ebc2ccb488390268feb154af, type: 3}

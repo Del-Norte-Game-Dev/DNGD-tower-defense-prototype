@@ -34,7 +34,8 @@ public static class PlacementService
 
         List<Vector2Int> positions = cells.ConvertAll(c => new Vector2Int(c.x, c.y));
         List<Vector2Int> costPositions = GetCostFootprintPositions(map, worldPos, data, dir);
-        placed = new PlacedBuilding(data, instance.transform, positions, costPositions, map);
+        Vector2Int origin = map.GetPlacementOrigin(worldPos, data, dir);
+        placed = new PlacedBuilding(data, instance.transform, positions, costPositions, map, origin, dir);
         bool placedOnMap = map.PlaceBuilding(placed);
         if (!placedOnMap)
         {
