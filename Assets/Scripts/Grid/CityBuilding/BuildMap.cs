@@ -99,7 +99,7 @@ public class BuildMap
         return rotated;
     }
 
-    private Vector3 GetPlacementWorldCorner(BuildingData.Dir dir, Vector2Int origin)
+    public Vector3 GetPlacementWorldCorner(BuildingData.Dir dir, Vector2Int origin)
     {
         Vector2 worldCorner = buildGrid.GetWorldPositionCorner(origin.x, origin.y);
         worldCorner += BuildingData.GetRotatedVector(dir, -0.5f, -0.5f) + new Vector2(0.5f, 0.5f);

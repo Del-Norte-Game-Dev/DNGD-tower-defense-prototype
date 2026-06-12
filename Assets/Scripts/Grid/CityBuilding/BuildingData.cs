@@ -11,6 +11,9 @@ public struct ResourceEntry
 [CreateAssetMenu(fileName = "BuildingData", menuName = "Building/BuildingData")]
 public class BuildingData : ScriptableObject
 {
+    [SerializeField] private string id;
+    public string ID => id;
+
     public BuildingShapeType type = BuildingShapeType.Rectangular;
 
     
@@ -181,6 +184,21 @@ public class BuildingData : ScriptableObject
             case Dir.Left: return 180;
             case Dir.Up: return 90;
             default: return 0;
+        }
+    }
+
+    public static Dir GetDirFromRot(int rotation)
+    {
+        if (rotation >= 0 && rotation <= 3)
+            return (Dir)rotation;
+
+        int normalized = ((rotation % 360) + 360) % 360;
+        switch (normalized)
+        {
+            case 90: return BuildingData.Dir.Up;
+            case 180: return BuildingData.Dir.Left;
+            case 270: return BuildingData.Dir.Down;
+            default: return BuildingData.Dir.Right;
         }
     }
 }
