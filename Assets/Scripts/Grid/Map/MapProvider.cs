@@ -9,6 +9,7 @@ public class MapProvider : GenericSingleton<MapProvider>
     [SerializeField] private int height = 100;
     [SerializeField] private float cellSize = 1f;
     [SerializeField] private Vector3 origin = Vector3.zero;
+    [SerializeField] bool showDebug = true;
     private FlowFieldVisualConfig config;
     private GridDebugDrawer debugDrawer;
 
@@ -34,22 +35,25 @@ public class MapProvider : GenericSingleton<MapProvider>
         );
         InitializePlainCosts();
 
-        config = GlobalAssets.FlowFieldVisual;
-        debugDrawer = new GameObject("MapDebugDrawer").AddComponent<GridDebugDrawer>();
-        debugDrawer.transform.SetParent(transform);
-        debugDrawer.Initialize(grid);
+        if (showDebug)
+        {
+            config = GlobalAssets.FlowFieldVisual;
+            debugDrawer = new GameObject("MapDebugDrawer").AddComponent<GridDebugDrawer>();
+            debugDrawer.transform.SetParent(transform);
+            debugDrawer.Initialize(grid);
 
-        debugDrawer.SetColor(true,
-            (x, y) =>
-            {
-                grid.TryGetGridObject(x, y, out MapCell cell);
-                if (cell == null || !cell.IsWalkable())
-                    return config.impassibleColor;
+            debugDrawer.SetColor(true,
+                (x, y) =>
+                {
+                    grid.TryGetGridObject(x, y, out MapCell cell);
+                    if (cell == null || !cell.IsWalkable())
+                        return config.impassibleColor;
 
-                float t = cell.cost / 5f;
-                return Color.Lerp(config.minCostColor, config.maxCostColor, Mathf.Clamp01(t));
-            });
-        // debugDrawer.SetText(true);
+                    float t = cell.cost / 5f;
+                    return Color.Lerp(config.minCostColor, config.maxCostColor, Mathf.Clamp01(t));
+                });
+            // debugDrawer.SetText(true);
+        }
         isInitialized = true;
     }
 

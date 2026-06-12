@@ -16,6 +16,7 @@ public class BuildingData : ScriptableObject
 
     public BuildingShapeType type = BuildingShapeType.Rectangular;
 
+    public bool isWalkable = true;
     
     public List<ResourceEntry> cost;
 

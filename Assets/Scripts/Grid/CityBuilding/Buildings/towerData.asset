@@ -10,21 +10,27 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
-  m_Name: wall
+  m_Name: towerData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
-  id: wall
+  id: woodtower
   type: 0
-  cost:
-  - type: 0
-    amount: 0
-  prefab: {fileID: 5222877825863610663, guid: 47b6f0b89f94ade4a9ded4ce51c5f3e8, type: 3}
+  cost: []
+  prefab: {fileID: 8797516249818397164, guid: 32a38e68ebc2ccb488390268feb154af, type: 3}
   size: {x: 1, y: 1}
   footprint:
   - {x: 0, y: 0}
-  costIncrement: 1
-  radius: 1
+  costIncrement: 2
+  radius: 2
   costFootprint:
   - {x: 1, y: 0}
   - {x: -1, y: 0}
   - {x: 0, y: 1}
   - {x: 0, y: -1}
+  - {x: 2, y: 0}
+  - {x: 1, y: 1}
+  - {x: 1, y: -1}
+  - {x: -2, y: 0}
+  - {x: -1, y: 1}
+  - {x: -1, y: -1}
+  - {x: 0, y: 2}
+  - {x: 0, y: -2}

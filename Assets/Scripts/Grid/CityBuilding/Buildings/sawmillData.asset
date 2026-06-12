@@ -10,15 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
-  m_Name: testTreeData
+  m_Name: sawmillData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
-  id: tree
+  id: sawmill
   type: 0
-  cost: []
-  prefab: {fileID: 1266148946770989328, guid: 58322d797f0734aa085f165188acf77e, type: 3}
-  size: {x: 1, y: 1}
+  cost:
+  - type: 0
+    amount: 3
+  prefab: {fileID: 842762302933028677, guid: 323500fe1609c425194f84530fccf162, type: 3}
+  size: {x: 2, y: 1}
   footprint:
   - {x: 0, y: 0}
+  - {x: 1, y: 0}
   costIncrement: 0
   radius: 0
   costFootprint: []

@@ -84,11 +84,20 @@ public class GameGridManager : GenericSingleton<GameGridManager>
     {
         if (mapProvider == null || placed == null)
             return;
-
-        foreach (Vector2Int cell in placed.OccupiedPositions)
-        {
-            mapProvider.IncreaseCost(cell.x, cell.y, 100);
+        
+        if (placed.Data.isWalkable){
+            foreach (Vector2Int cell in placed.OccupiedPositions)
+            {
+                mapProvider.IncreaseCost(cell.x, cell.y, 100);
+            }
+        } else {
+            foreach (Vector2Int cell in placed.OccupiedPositions)
+            {
+                mapProvider.SetWalkable(cell.x, cell.y, false);
+            }
         }
+
+        
 
         foreach (Vector2Int cell in placed.OccupiedCostPositions){
             mapProvider.IncreaseCost(cell.x, cell.y, (byte)placed.Data.costIncrement);
@@ -100,9 +109,16 @@ public class GameGridManager : GenericSingleton<GameGridManager>
         if (mapProvider == null || placed == null)
             return;
 
-        foreach (Vector2Int cell in placed.OccupiedPositions)
-        {
-            mapProvider.DecreaseCost(cell.x, cell.y, 100);
+        if (placed.Data.isWalkable){
+            foreach (Vector2Int cell in placed.OccupiedPositions)
+            {
+                mapProvider.DecreaseCost(cell.x, cell.y, 100);
+            }
+        } else {
+            foreach (Vector2Int cell in placed.OccupiedPositions)
+            {
+                mapProvider.SetWalkable(cell.x, cell.y, true);
+            }
         }
 
         foreach (Vector2Int cell in placed.OccupiedCostPositions){
