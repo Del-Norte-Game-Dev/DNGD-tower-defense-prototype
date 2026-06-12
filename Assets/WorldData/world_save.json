@@ -1,26 +1,274 @@
 {
     "buildings": [
         {
-            "buildingID": "tree",
+            "buildingID": "bigtree",
             "origin": {
-                "x": 18,
+                "x": 24,
+                "y": 10
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "bigtree",
+            "origin": {
+                "x": 26,
+                "y": 10
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "bigtree",
+            "origin": {
+                "x": 26,
+                "y": 8
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "bigtree",
+            "origin": {
+                "x": 24,
+                "y": 8
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "bigtree",
+            "origin": {
+                "x": 20,
+                "y": 13
+            },
+            "rotation": 1
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
+                "y": 12
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
+                "y": 11
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
+                "y": 10
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
                 "y": 9
             },
             "rotation": 0
         },
         {
-            "buildingID": "tree",
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
+                "y": 8
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
             "origin": {
                 "x": 17,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 18,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 19,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 20,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 21,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 22,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
+                "y": 12
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
+                "y": 11
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
+                "y": 10
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
                 "y": 9
             },
             "rotation": 0
         },
         {
-            "buildingID": "tree",
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
+                "y": 7
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
+                "y": 8
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 15,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 16,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 17,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 19,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 21,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 22,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
+            "origin": {
+                "x": 20,
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "wall",
             "origin": {
                 "x": 18,
-                "y": 8
+                "y": 6
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "woodtower",
+            "origin": {
+                "x": 20,
+                "y": 11
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "woodtower",
+            "origin": {
+                "x": 19,
+                "y": 11
+            },
+            "rotation": 0
+        },
+        {
+            "buildingID": "woodtower",
+            "origin": {
+                "x": 19,
+                "y": 12
             },
             "rotation": 0
         }
