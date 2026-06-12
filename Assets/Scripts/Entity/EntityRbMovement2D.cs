@@ -68,5 +68,15 @@ public class EntityRbMovement2D : MonoBehaviour
 
         Vector2 newPosition = rb.position + currentVelocity * deltaTime;
         rb.MovePosition(newPosition);
+        ApplyRotatation();
+    }
+
+    private void ApplyRotatation()
+    {
+        if (currentVelocity.sqrMagnitude < sqrStopEpsilon)
+        return;
+
+        float angle = Mathf.Atan2(currentVelocity.y, currentVelocity.x) * Mathf.Rad2Deg;
+        rb.rotation = angle;
     }
 }

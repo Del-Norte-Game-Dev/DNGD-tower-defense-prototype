@@ -1,14 +1,6 @@
 {
     "buildings": [
         {
-            "buildingID": "mainbase",
-            "origin": {
-                "x": 51,
-                "y": 48
-            },
-            "rotation": 0
-        },
-        {
             "buildingID": "tree",
             "origin": {
                 "x": 40,
