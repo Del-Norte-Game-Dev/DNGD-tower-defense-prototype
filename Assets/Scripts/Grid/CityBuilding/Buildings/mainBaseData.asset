@@ -10,16 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 778abe92090e24b409ef77e7ceffa034, type: 3}
-  m_Name: treeData
+  m_Name: mainBaseData
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
-  id: tree
+  id: mainbase
   type: 0
-  isWalkable: 0
+  isWalkable: 1
   cost: []
-  prefab: {fileID: 1266148946770989328, guid: 58322d797f0734aa085f165188acf77e, type: 3}
-  size: {x: 1, y: 1}
+  prefab: {fileID: 0}
+  size: {x: 3, y: 3}
   footprint:
   - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
+  - {x: 1, y: 0}
+  - {x: 1, y: 1}
+  - {x: 1, y: 2}
+  - {x: 2, y: 0}
+  - {x: 2, y: 1}
+  - {x: 2, y: 2}
   costIncrement: 0
   radius: 0
   costFootprint: []

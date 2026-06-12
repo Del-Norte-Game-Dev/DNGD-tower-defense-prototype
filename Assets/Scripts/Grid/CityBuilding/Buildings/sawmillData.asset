@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::BuildingData
   id: sawmill
   type: 0
+  isWalkable: 1
   cost:
   - type: 0
     amount: 3
