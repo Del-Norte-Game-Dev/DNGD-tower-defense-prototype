@@ -63,7 +63,7 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
 
         for (int i = 0; i < waveNumber * 10; i++)
         {
-            GameObject e = Instantiate(enemyPrefab, GetEdgeSpawn(), Quaternion.identity);
+            GameObject e = Instantiate(enemyPrefab, GetEdgeSpawn(), enemyPrefab.transform.rotation);
             enemies.Add(e.GetComponent<EntityController2D>());
         }
         

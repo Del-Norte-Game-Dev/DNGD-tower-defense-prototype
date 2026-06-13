@@ -55,5 +55,12 @@ public class EntityMovement2D : MonoBehaviour
             return;
 
         transform.position += (Vector3)(currentVelocity * Time.fixedDeltaTime);
+        ApplyRotatation();
+    }
+
+    private void ApplyRotatation()
+    {
+        float angle = Mathf.Atan2(currentVelocity.y, currentVelocity.x) * Mathf.Rad2Deg;
+        transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 }
