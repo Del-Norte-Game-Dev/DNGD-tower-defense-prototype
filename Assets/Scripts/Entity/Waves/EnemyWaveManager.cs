@@ -1,11 +1,22 @@
 using NUnit.Framework;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEditor.Rendering;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
 {
+    [Header("UI")]
+    [SerializeField] private TextMeshProUGUI waveNumberTxt;
+    [SerializeField] private TextMeshProUGUI EnemiesLeftTxt;
+    [SerializeField] private Button startBtn;
+    
+
+
     private bool isInitialized;
 
     private int areaWidth;
@@ -13,13 +24,16 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
     public Vector3 defaultDestination;
     private bool waveStarted = false;
 
-    public List<EntityController2D> enemies = new List<EntityController2D>();
+    private List<EntityController2D> enemies = new List<EntityController2D>();
     public int waveNumber = 0;
 
     [SerializeField] private GameObject enemyPrefab;
 
+    [SerializeField] private WaveRegistry waveRegistry;
+
 
     public static event Action OnWaveCleared;
+
 
 
     public void Initialize(int width, int height, float cellSize, Vector3 defaultDestination)
@@ -54,19 +68,32 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
     public void StartNextWave()
     {
         //if (waveStarted)
-            //return;
-        
+        //return;
+        startBtn.interactable = false;
         waveStarted = true;
 
         waveNumber++;
         Debug.Log($"Starting wave {waveNumber}");
 
-        for (int i = 0; i < waveNumber * 10; i++)
+        if (waveRegistry.waves[waveNumber - 1] != null)
         {
-            GameObject e = Instantiate(enemyPrefab, GetEdgeSpawn(), enemyPrefab.transform.rotation);
-            enemies.Add(e.GetComponent<EntityController2D>());
+            foreach (EnemySpawn entry in waveRegistry.waves[waveNumber - 1].enemies)
+            {
+                for (int i = 0; i < entry.amount; i++)
+                {
+                    GameObject e = Instantiate(enemyPrefab, GetEdgeSpawn(), enemyPrefab.transform.rotation);
+                    enemies.Add(e.GetComponent<EntityController2D>());
+                }
+            }
         }
-        
+        else
+        {
+            Debug.Log("player wins or make endless mode");
+        }
+
+        EnemiesLeftTxt.text = $"Enemies Left: {enemies.Count} / {waveRegistry.waves[waveNumber - 1].enemies.Sum(e => e.amount)}";
+        waveNumberTxt.text = $"Wave: {waveNumber}";
+
     }
 
     public void EnemyDefeated(GameObject enemy)
@@ -74,9 +101,12 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
         enemies.Remove(enemy.GetComponent<EntityController2D>());
         Destroy(enemy);
 
-        if(enemies.Count == 0)
+        EnemiesLeftTxt.text = $"Enemies Left: {enemies.Count} / {waveRegistry.waves[waveNumber - 1].enemies.Sum(e => e.amount)}";
+
+        if (enemies.Count == 0)
         {
             waveStarted = false;
+            startBtn.interactable = true;
             Debug.Log($"Wave {waveNumber} cleared!");
             OnWaveCleared?.Invoke();
         }
