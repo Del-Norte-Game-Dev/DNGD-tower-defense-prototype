@@ -4,5 +4,5 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "WaveRegistry", menuName = "Wave/WaveRegistry")]
 public class WaveRegistry : ScriptableObject
 {
-    public List<EnemyWave> waves;
+    public List<WaveDefinition> waves;
 }

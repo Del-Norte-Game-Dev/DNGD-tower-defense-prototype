@@ -6,8 +6,6 @@ public class EntityController2D : MonoBehaviour
     public static int ENTITY_COUNT;
 
     private EntityRbMovement2D movement;
-
-    [SerializeField] private float maxHealth = 5;
     private HealthComponent health;
 
     [Header("Attack Settings")]

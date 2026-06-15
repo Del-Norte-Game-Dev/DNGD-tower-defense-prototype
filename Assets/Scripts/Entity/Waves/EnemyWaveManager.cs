@@ -25,16 +25,11 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
     private bool waveStarted = false;
 
     private List<EntityController2D> enemies = new List<EntityController2D>();
-    public int waveNumber = 0;
-
-    [SerializeField] private GameObject enemyPrefab;
-
+    private int waveNumber = 0;
     [SerializeField] private WaveRegistry waveRegistry;
 
 
     public static event Action OnWaveCleared;
-
-
 
     public void Initialize(int width, int height, float cellSize, Vector3 defaultDestination)
     {
@@ -67,21 +62,20 @@ public class EnemyWaveManager : GenericSingleton<EnemyWaveManager>
 
     public void StartNextWave()
     {
-        //if (waveStarted)
-        //return;
+        WaveDefinition wave = waveRegistry.waves[waveNumber];
         startBtn.interactable = false;
         waveStarted = true;
 
         waveNumber++;
         Debug.Log($"Starting wave {waveNumber}");
 
-        if (waveRegistry.waves[waveNumber - 1] != null)
+        if (wave != null)
         {
-            foreach (EnemySpawn entry in waveRegistry.waves[waveNumber - 1].enemies)
+            foreach (EnemySpawn entry in wave.enemies)
             {
                 for (int i = 0; i < entry.amount; i++)
                 {
-                    GameObject e = Instantiate(enemyPrefab, GetEdgeSpawn(), enemyPrefab.transform.rotation);
+                    GameObject e = Instantiate(entry.enemyPrefab, GetEdgeSpawn(), entry.enemyPrefab.transform.rotation);
                     enemies.Add(e.GetComponent<EntityController2D>());
                 }
             }

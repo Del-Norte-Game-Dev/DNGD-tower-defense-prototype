@@ -13,17 +13,10 @@ MonoBehaviour:
   m_Name: WaveRegistry
   m_EditorClassIdentifier: Assembly-CSharp::WaveRegistry
   waves:
-  - enemies:
-    - enemyPrefab: {fileID: 1944488623986578665, guid: 3412f06d8f0830a4c9bc9bd7ec3861a0, type: 3}
-      amount: 10
-    - enemyPrefab: {fileID: 1944488623986578665, guid: 3412f06d8f0830a4c9bc9bd7ec3861a0, type: 3}
-      amount: 10
-  - enemies:
-    - enemyPrefab: {fileID: 1944488623986578665, guid: 3412f06d8f0830a4c9bc9bd7ec3861a0, type: 3}
-      amount: 30
-  - enemies:
-    - enemyPrefab: {fileID: 1944488623986578665, guid: 3412f06d8f0830a4c9bc9bd7ec3861a0, type: 3}
-      amount: 35
-  - enemies:
-    - enemyPrefab: {fileID: 1944488623986578665, guid: 3412f06d8f0830a4c9bc9bd7ec3861a0, type: 3}
-      amount: 35
+  - {fileID: 11400000, guid: 942c6aabaf6e24edb86592aefb2d33cb, type: 2}
+  - {fileID: 11400000, guid: bd7b63111da4743b7a4710f351e09bc1, type: 2}
+  - {fileID: 11400000, guid: 0f7acf3effead4d21a94c26c1ac6d224, type: 2}
+  - {fileID: 11400000, guid: 5d26c4680de254f4b8762df804281497, type: 2}
+  - {fileID: 11400000, guid: 5f9ec0049ddff42a58c53779d48cd9e5, type: 2}
+  - {fileID: 11400000, guid: 1fac28a0bee4047d9ab2503a6077fec4, type: 2}
+  - {fileID: 11400000, guid: 431abd0b31934421f97d13ce9a813e77, type: 2}
