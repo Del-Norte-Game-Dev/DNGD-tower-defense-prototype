@@ -1367,6 +1367,14 @@
                 "y": 22
             },
             "rotation": 0
+        },
+        {
+            "buildingID": "mainbase",
+            "origin": {
+                "x": 49,
+                "y": 49
+            },
+            "rotation": 0
         }
     ]
 }

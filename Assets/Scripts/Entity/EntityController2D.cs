@@ -6,8 +6,6 @@ public class EntityController2D : MonoBehaviour
     public static int ENTITY_COUNT;
 
     private EntityRbMovement2D movement;
-
-    [SerializeField] private float maxHealth = 5;
     private HealthComponent health;
 
     [Header("Attack Settings")]
@@ -72,15 +70,7 @@ public class EntityController2D : MonoBehaviour
             }
         }
     }
-
-    public void SetVelocity(Vector2 velocity)
-    {
-        if (movement != null)
-        {
-            movement.SetVelocity(velocity);
-        }
-    }
-
+    
     public Vector2 GetVelocity()
     {
         return movement != null ? movement.CurrentVelocity : Vector2.zero;

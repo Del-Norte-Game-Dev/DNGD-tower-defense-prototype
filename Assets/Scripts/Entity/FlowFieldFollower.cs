@@ -2,31 +2,22 @@ using UnityEngine;
 
 public class FlowFieldFollower : MonoBehaviour
 {
-    [SerializeField] private float moveSpeed = 5f;
     [SerializeField] private float directionRefreshInterval = 0.12f;
 
     private EntityRbMovement2D movement;
-    private EntityController2D controller;
     private FlowField flowField;
 
     private Vector2 currentFlowDirection;
     private float directionRefreshTimer;
-    private bool selected;
 
     private void Awake()
     {
         movement = GetComponent<EntityRbMovement2D>();
-        controller = GetComponent<EntityController2D>();
     }
 
     private void Start()
     {
         AssignFlowField(FlowFieldManager.Instance.GetFlowField());
-    }
-
-    public void SetSelected(bool selected)
-    {
-        this.selected = selected;
     }
 
     public void AssignFlowField(FlowField field)
@@ -37,13 +28,7 @@ public class FlowFieldFollower : MonoBehaviour
     private void FixedUpdate()
     {
         if (flowField == null)
-        {
-            if (movement != null)
-                movement.SetVelocity(Vector2.zero);
-            else if (controller != null)
-                controller.SetVelocity(Vector2.zero);
-            return;
-        }
+            movement.SetDirection(Vector2.zero);
 
         directionRefreshTimer -= Time.fixedDeltaTime;
         if (directionRefreshTimer <= 0f)
@@ -55,10 +40,8 @@ public class FlowFieldFollower : MonoBehaviour
             }
         }
 
-        Vector2 desiredVelocity = currentFlowDirection * moveSpeed;
+        Vector2 desiredDir = currentFlowDirection;
         if (movement != null)
-            movement.SetVelocity(desiredVelocity);
-        else if (controller != null)
-            controller.SetVelocity(desiredVelocity);
+            movement.SetDirection(desiredDir);
     }
 }

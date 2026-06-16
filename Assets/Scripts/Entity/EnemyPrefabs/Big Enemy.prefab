@@ -26,7 +26,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0.5, y: 0.5, z: -0.5, w: -0.5}
   m_LocalPosition: {x: 0, y: 0, z: -0.33}
-  m_LocalScale: {x: 0.62, y: 0.62, z: 0.62}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 4189675613826930308}
@@ -49,7 +49,7 @@ GameObject:
   - component: {fileID: 4122819428956494477}
   - component: {fileID: 3505216877003718320}
   m_Layer: 6
-  m_Name: Enemy
+  m_Name: Big Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -66,7 +66,7 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
+  m_ConstrainProportionsScale: 1
   m_Children:
   - {fileID: 5821149038382750736}
   - {fileID: 23190268747320251}
@@ -84,8 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c092b628411cf47f08b50ea2453b3206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlowFieldFollower
-  moveSpeed: 5
-  directionRefreshInterval: 0.12
+  directionRefreshInterval: 0.24
 --- !u!114 &7482863099723791081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,7 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7bdace0417d42b0a706153c7021cff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityRbMovement2D
-  maxSpeed: 10
+  moveSpeed: 3
+  maxSpeed: 3
   acceleration: 60
   stopEpsilon: 0.01
 --- !u!114 &6032577740293034480
@@ -113,11 +113,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4cac24fc600104859a725ffeda397b23, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityController2D
-  maxHealth: 5
-  attackRange: 5
-  attackRate: 5
-  attackDamage: 1
-  retargetInterval: 0.25
+  attackRange: 3
+  attackRate: 1
+  attackDamage: 2
+  retargetInterval: 1
   buildingLayer:
     serializedVersion: 2
     m_Bits: 128
@@ -133,8 +132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a7f475031c6e455dae4d1871cd4310b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  CurrentHealth: 10
-  MaxHealth: 10
+  CurrentHealth: 20
+  MaxHealth: 20
 --- !u!50 &4122819428956494477
 Rigidbody2D:
   serializedVersion: 5

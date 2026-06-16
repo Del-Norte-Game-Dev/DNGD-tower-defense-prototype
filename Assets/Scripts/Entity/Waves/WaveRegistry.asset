@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 393b784aea8ca6b4f828629b47c7d72d, type: 3}
+  m_Name: WaveRegistry
+  m_EditorClassIdentifier: Assembly-CSharp::WaveRegistry
+  waves:
+  - {fileID: 11400000, guid: 942c6aabaf6e24edb86592aefb2d33cb, type: 2}
+  - {fileID: 11400000, guid: bd7b63111da4743b7a4710f351e09bc1, type: 2}
+  - {fileID: 11400000, guid: 0f7acf3effead4d21a94c26c1ac6d224, type: 2}
+  - {fileID: 11400000, guid: 5d26c4680de254f4b8762df804281497, type: 2}
+  - {fileID: 11400000, guid: 5f9ec0049ddff42a58c53779d48cd9e5, type: 2}
+  - {fileID: 11400000, guid: 1fac28a0bee4047d9ab2503a6077fec4, type: 2}
+  - {fileID: 11400000, guid: 431abd0b31934421f97d13ce9a813e77, type: 2}
