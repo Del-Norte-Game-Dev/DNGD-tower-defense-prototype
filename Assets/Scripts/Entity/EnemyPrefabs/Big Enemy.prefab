@@ -84,8 +84,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c092b628411cf47f08b50ea2453b3206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlowFieldFollower
-  moveSpeed: 3
-  directionRefreshInterval: 0.12
+  directionRefreshInterval: 0.24
 --- !u!114 &7482863099723791081
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,6 +97,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7bdace0417d42b0a706153c7021cff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityRbMovement2D
+  moveSpeed: 3
   maxSpeed: 3
   acceleration: 60
   stopEpsilon: 0.01
@@ -132,8 +132,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5a7f475031c6e455dae4d1871cd4310b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
-  CurrentHealth: 50
-  MaxHealth: 50
+  CurrentHealth: 20
+  MaxHealth: 20
 --- !u!50 &4122819428956494477
 Rigidbody2D:
   serializedVersion: 5

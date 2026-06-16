@@ -4,6 +4,7 @@ using UnityEngine;
 public class EntityRbMovement2D : MonoBehaviour
 {
     [Header("Movement Settings")]
+    [SerializeField] private float moveSpeed = 10f;
     [SerializeField] private float maxSpeed = 10f;
     [SerializeField] private float acceleration = 60f;
     [SerializeField] private float stopEpsilon = 0.01f;
@@ -22,8 +23,10 @@ public class EntityRbMovement2D : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
     }
 
-    public void SetVelocity(Vector2 velocity)
+    public void SetDirection(Vector2 dir)
     {
+        dir.Normalize();
+        Vector2 velocity = dir * moveSpeed;
         desiredVelocity = Vector2.ClampMagnitude(velocity, maxSpeed);
 
         if (desiredVelocity.sqrMagnitude < sqrStopEpsilon)

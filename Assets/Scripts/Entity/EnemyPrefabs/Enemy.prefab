@@ -84,7 +84,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c092b628411cf47f08b50ea2453b3206, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::FlowFieldFollower
-  moveSpeed: 5
   directionRefreshInterval: 0.12
 --- !u!114 &7482863099723791081
 MonoBehaviour:
@@ -98,7 +97,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e7bdace0417d42b0a706153c7021cff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EntityRbMovement2D
-  maxSpeed: 8
+  moveSpeed: 6
+  maxSpeed: 6
   acceleration: 60
   stopEpsilon: 0.01
 --- !u!114 &6032577740293034480

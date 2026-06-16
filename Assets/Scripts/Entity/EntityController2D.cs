@@ -70,15 +70,7 @@ public class EntityController2D : MonoBehaviour
             }
         }
     }
-
-    public void SetVelocity(Vector2 velocity)
-    {
-        if (movement != null)
-        {
-            movement.SetVelocity(velocity);
-        }
-    }
-
+    
     public Vector2 GetVelocity()
     {
         return movement != null ? movement.CurrentVelocity : Vector2.zero;
