@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using static BuildingData;
 
 public class BuildManager : GenericSingleton<BuildManager>
@@ -28,16 +29,17 @@ public class BuildManager : GenericSingleton<BuildManager>
             return;
 
         buildingRegistry = registry;
-        currentData = registry != null && registry.Count > 0 ? registry.Get(0) : null;
+        //currentData = registry != null && registry.Count > 0 ? registry.Get(0) : null;
+        currentData = null;
         currentDataIndex = 0;
         buildMap = new BuildMap(width, height, cellSize, origin);
         placedBuildings.Clear();
 
-        if (currentData != null)
-        {
+        //if (currentData != null)
+        //{
             previewController = new BuildPreview();
             previewController.Initialize(currentData, currentDir);
-        }
+        //}
         isInitialized = true;
 
         if (enableDebug)
@@ -53,36 +55,49 @@ public class BuildManager : GenericSingleton<BuildManager>
 
     void Update()
     {
+        
+            
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 
         Vector2 worldPos = Vector2.zero;
 
         Plane groundPlane = new Plane(Vector3.forward, Vector3.zero);
+
         if (groundPlane.Raycast(ray, out float distance))
         {
             worldPos = ray.GetPoint(distance);
         }
 
+        if (EventSystem.current.IsPointerOverGameObject())
+            return;
+
         previewController?.UpdatePreview(worldPos, buildMap, currentData, currentDir);
 
-        if (Input.GetMouseButtonDown(0))
+        if (currentData != null)
         {
-            PlaceBuilding(worldPos, currentData, currentDir);
+            
+
+            if (Input.GetMouseButtonDown(0))
+            {
+                PlaceBuilding(worldPos, currentData, currentDir);
+            }
+
+            
+
+            if (Input.GetKeyDown(KeyCode.R))
+            {
+                Rotate();
+            }
+
+            /*if (Input.GetKeyDown(KeyCode.E))
+            {
+                currentData = NextBuildingData();
+            }*/
         }
 
         if (Input.GetMouseButtonDown(1))
         {
             RemoveBuilding(worldPos);
-        }
-
-        if (Input.GetKeyDown(KeyCode.R))
-        {
-            Rotate();
-        }
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            currentData = NextBuildingData();
         }
     }
 
@@ -294,5 +309,15 @@ public class BuildManager : GenericSingleton<BuildManager>
         }
 
         return surroundingCache;
+    }
+
+    public BuildingData GetBuildingData()
+    {
+        return currentData;
+    }
+
+    public void SelectBuilding(BuildingData buildingData)
+    {
+        currentData = buildingData;
     }
 }
